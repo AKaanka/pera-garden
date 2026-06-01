@@ -1,11 +1,21 @@
 import { useEffect, useState } from "react";
 import { HomePage } from "./pages";
-import { AdminHeroPage } from "./pages/admin/AdminHeroPage";
 import { AdminLayout } from "./pages/admin/AdminLayout";
 import { AdminLoginPage } from "./pages/admin/AdminLoginPage";
+import { AdminSectionEditorPage } from "./pages/admin/AdminSectionEditorPage";
+import { AdminSectionsPage } from "./pages/admin/AdminSectionsPage";
 import { AdminSubmissionsPage } from "./pages/admin/AdminSubmissionsPage";
 import { useAdminAccess } from "./hooks/useAdminAccess";
 import { useAuth } from "./hooks/useAuth";
+import type { SectionKey } from "./types";
+
+const sectionKeys: SectionKey[] = ["hero", "about", "slider"];
+
+function parseSectionKey(pathname: string): SectionKey | null {
+  const sectionKey = pathname.split("/").filter(Boolean).at(-1);
+
+  return sectionKeys.includes(sectionKey as SectionKey) ? (sectionKey as SectionKey) : null;
+}
 
 function usePathname() {
   const [pathname, setPathname] = useState(window.location.pathname);
@@ -70,11 +80,18 @@ function AdminRoutes({ pathname }: { pathname: string }) {
     );
   }
 
-  return (
-    <AdminLayout>
-      {pathname === "/admin/submissions" ? <AdminSubmissionsPage /> : <AdminHeroPage />}
-    </AdminLayout>
-  );
+  let page = <AdminSectionsPage />;
+
+  if (pathname === "/admin/submissions") {
+    page = <AdminSubmissionsPage />;
+  } else if (pathname === "/admin/hero") {
+    page = <AdminSectionEditorPage sectionKey="hero" />;
+  } else if (pathname.startsWith("/admin/sections/")) {
+    const sectionKey = parseSectionKey(pathname);
+    page = sectionKey ? <AdminSectionEditorPage sectionKey={sectionKey} /> : <AdminSectionsPage />;
+  }
+
+  return <AdminLayout>{page}</AdminLayout>;
 }
 
 export default function App() {

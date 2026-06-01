@@ -19,7 +19,8 @@ export function AdminLayout({ children }: AdminLayoutProps) {
           Pera Garden
         </a>
         <nav aria-label="Admin">
-          <a href="/admin/hero">Hero</a>
+          <a href="/admin/sections">Sections</a>
+          <a href="/admin/sections/hero">Hero</a>
           <a href="/admin/submissions">Submissions</a>
         </nav>
         <button className="secondary-button" type="button" onClick={handleSignOut}>

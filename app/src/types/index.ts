@@ -2,6 +2,8 @@ export type Locale = "tr" | "en";
 
 export type SectionStatus = "draft" | "published";
 
+export type SectionKey = "hero" | "about" | "slider";
+
 export type HeroImage = {
   bucket: "hero";
   path: string;
@@ -21,9 +23,45 @@ export type LocalizedContent<T> = Record<Locale, T>;
 
 export type HeroContent = LocalizedContent<HeroLocaleContent>;
 
-export type SiteContentRow<TContent> = {
+export type AboutHighlight = {
+  title: string;
+  description: string;
+};
+
+export type AboutLocaleContent = {
+  eyebrow: string;
+  title: string;
+  body: string;
+  highlights: AboutHighlight[];
+};
+
+export type AboutContent = LocalizedContent<AboutLocaleContent>;
+
+export type SliderItem = {
+  title: string;
+  description: string;
+};
+
+export type SliderLocaleContent = {
+  eyebrow: string;
+  title: string;
+  subtitle: string;
+  slides: SliderItem[];
+};
+
+export type SliderContent = LocalizedContent<SliderLocaleContent>;
+
+export type SectionContentMap = {
+  hero: HeroContent;
+  about: AboutContent;
+  slider: SliderContent;
+};
+
+export type AnySectionContent = SectionContentMap[SectionKey];
+
+export type SiteContentRow<TContent = AnySectionContent> = {
   id: string;
-  section_key: "hero";
+  section_key: SectionKey;
   status: SectionStatus;
   order_index: number;
   default_locale: Locale;
