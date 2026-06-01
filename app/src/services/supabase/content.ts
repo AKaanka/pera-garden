@@ -4,15 +4,15 @@ import { requireSupabaseClient, supabase } from "./client";
 export const fallbackHeroContent: HeroContent = {
   tr: {
     eyebrow: "Pera Garden",
-    title: "Dugununuz icin zamansiz bir bahce",
+    title: "Düğününüz için zamansız bir bahçe",
     subtitle:
-      "Sevdiklerinizle bir araya geleceginiz, fotograf gibi hatirlanan zarif bir acik hava davet alani.",
+      "Sevdiklerinizle bir araya geleceğiniz, fotoğraf gibi hatırlanan zarif bir açık hava davet alanı.",
     primaryCtaLabel: "Rezervasyon iste",
     primaryCtaHref: "#contact",
     image: {
       bucket: "hero",
       path: "",
-      alt: "Pera Garden dugun alani",
+      alt: "Pera Garden düğün alanı",
     },
   },
   en: {

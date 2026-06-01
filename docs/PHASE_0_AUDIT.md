@@ -27,6 +27,7 @@ An `sbp_...` Supabase token was shared in chat. Treat it as compromised. Do not 
 - Git working tree is clean after the local dependency repair.
 - Public contact form labels, button text, and local fallback messages are Turkish-first with English fallback.
 - `submit-contact` validation, rate-limit, Turnstile, queued, and success responses are locale-aware.
+- Default Hero fallback copy, public metadata, and contact copy use polished Turkish diacritics.
 
 ## Local Environment Repair Performed
 
@@ -66,9 +67,10 @@ These items need dashboard, MCP, or CLI access after token rotation:
 ## Product / Content Blockers
 
 - Production Hero image is still not confirmed.
-- Final Turkish public copy is still not confirmed.
+- Final Turkish public copy still needs owner approval, though the committed defaults are now production-quality placeholders.
 - Public homepage has only Hero and ContactForm, which is acceptable for MVP but thin for real conversion.
 - The updated `submit-contact` function must be redeployed before hosted validation/success messages reflect the localized copy.
+- The Hero copy polish migration must be applied before hosted default Hero rows update.
 
 ## Recommended Next Actions
 
@@ -78,5 +80,6 @@ These items need dashboard, MCP, or CLI access after token rotation:
 4. Set real Turnstile and WhatsApp secrets.
 5. Disable `ALLOW_MISSING_TURNSTILE`.
 6. Run `supabase/verify_compact.sql` against the target project.
-7. Deploy the updated `submit-contact` Edge Function.
-8. Test one real production-style contact submission.
+7. Apply `supabase/migrations/20260601190000_polish_default_hero_copy.sql`.
+8. Deploy the updated `submit-contact` Edge Function.
+9. Test one real production-style contact submission.

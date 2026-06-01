@@ -10,14 +10,14 @@ type ContactFormProps = {
 
 const copy = {
   tr: {
-    configError: "Iletisim formu henuz hazir degil.",
-    fallbackError: "Bir seyler ters gitti. Lutfen tekrar deneyin.",
+    configError: "İletişim formu henüz hazır değil.",
+    fallbackError: "Bir şeyler ters gitti. Lütfen tekrar deneyin.",
     firstName: "Ad",
     lastName: "Soyad",
     phone: "Telefon",
     message: "Mesaj",
-    submitting: "Gonderiliyor...",
-    submit: "Rezervasyon istegi gonder",
+    submitting: "Gönderiliyor...",
+    submit: "Rezervasyon isteği gönder",
   },
   en: {
     configError: "Contact form is not configured yet.",
@@ -113,9 +113,9 @@ export function ContactForm({ locale }: ContactFormProps) {
       <div className="section-shell contact-shell">
         <div>
           <p className="eyebrow">Rezervasyon</p>
-          <h2 id="contact-title">Tarih ve detaylari konusalim</h2>
+          <h2 id="contact-title">Tarih ve detayları konuşalım</h2>
           <p>
-            Bilgilerinizi birakin; Pera Garden ekibi WhatsApp uzerinden size geri donsun.
+            Bilgilerinizi bırakın; Pera Garden ekibi WhatsApp üzerinden size geri dönsün.
           </p>
         </div>
 

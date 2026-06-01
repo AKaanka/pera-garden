@@ -77,14 +77,14 @@ MVP Hero:
 {
   "tr": {
     "eyebrow": "Pera Garden",
-    "title": "Dugununuz icin zamansiz bir bahce",
-    "subtitle": "Sevdiklerinizle bir araya geleceginiz...",
+    "title": "Düğününüz için zamansız bir bahçe",
+    "subtitle": "Sevdiklerinizle bir araya geleceğiniz...",
     "primaryCtaLabel": "Rezervasyon iste",
     "primaryCtaHref": "#contact",
     "image": {
       "bucket": "hero",
       "path": "",
-      "alt": "Pera Garden dugun alani"
+      "alt": "Pera Garden düğün alanı"
     }
   },
   "en": {
