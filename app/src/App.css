@@ -125,8 +125,49 @@ p {
   padding: 72px 24px;
 }
 
-.contact-section {
+.about-section {
   background: var(--color-paper);
+}
+
+.about-shell {
+  display: grid;
+  gap: 32px;
+}
+
+.about-copy {
+  max-width: 680px;
+}
+
+.about-copy h2 {
+  max-width: 12ch;
+}
+
+.about-highlights {
+  border-top: 1px solid #e7dbcd;
+  display: grid;
+}
+
+.about-highlights div {
+  border-bottom: 1px solid #e7dbcd;
+  display: grid;
+  gap: 8px;
+  padding: 20px 0;
+}
+
+.about-highlights strong {
+  color: var(--color-ink);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.25rem;
+  font-weight: 500;
+}
+
+.about-highlights span {
+  color: var(--color-muted);
+  line-height: 1.6;
+}
+
+.contact-section {
+  background: #f5efe6;
 }
 
 .contact-shell {
@@ -391,6 +432,15 @@ textarea {
 
   .contact-shell {
     grid-template-columns: 0.9fr 1.1fr;
+  }
+
+  .about-shell {
+    align-items: start;
+    grid-template-columns: 0.92fr 1.08fr;
+  }
+
+  .about-highlights {
+    border-top: 0;
   }
 
   .admin-page {

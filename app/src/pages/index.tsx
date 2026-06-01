@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { About } from "../sections/About";
 import { ContactForm } from "../sections/ContactForm";
 import { Hero } from "../sections/Hero";
 import { getPublishedHero } from "../services/supabase/content";
@@ -57,6 +58,7 @@ export function HomePage() {
   return (
     <main>
       <Hero content={state.content} locale={locale} />
+      <About />
       <ContactForm locale={locale} />
       <footer className="site-footer">
         <span>Pera Garden</span>

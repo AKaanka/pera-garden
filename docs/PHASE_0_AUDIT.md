@@ -68,7 +68,7 @@ These items need dashboard, MCP, or CLI access after token rotation:
 
 - Production Hero image is still not confirmed.
 - Final Turkish public copy still needs owner approval, though the committed defaults are now production-quality placeholders.
-- Public homepage has only Hero and ContactForm, which is acceptable for MVP but thin for real conversion.
+- Public homepage now has Hero, About, and ContactForm. Services, Location, FAQ, and Testimonials remain Phase 1 trust-building work.
 - The updated `submit-contact` function must be redeployed before hosted validation/success messages reflect the localized copy.
 - The Hero copy polish migration must be applied before hosted default Hero rows update.
 

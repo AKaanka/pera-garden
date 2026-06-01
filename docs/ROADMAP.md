@@ -27,7 +27,7 @@ Goal:
 Make the one-pager feel complete enough for couples arriving from Instagram or Google.
 
 Recommended order:
-1. Add a polished About/venue story section.
+1. Add a polished About/venue story section. Status: static section added.
 2. Add Services or Packages with short, scannable copy.
 3. Add a Location section with practical contact/location details.
 4. Add FAQ for common friction points.
