@@ -1,0 +1,7 @@
+project_id = "pera-garden"
+
+[functions.submit-contact]
+verify_jwt = false
+
+[functions.retry-whatsapp]
+verify_jwt = true
