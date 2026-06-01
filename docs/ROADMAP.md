@@ -27,16 +27,18 @@ Goal:
 Make the one-pager feel complete enough for couples arriving from Instagram or Google.
 
 Recommended order:
-1. Add a polished About/venue story section. Status: static section added.
-2. Add Services or Packages with short, scannable copy.
-3. Add a Location section with practical contact/location details.
-4. Add FAQ for common friction points.
-5. Add Testimonials only when real quotes are available.
+1. Add a polished About/venue story section. Status: editable section added.
+2. Add an editable day-flow Slider section. Status: editable section added.
+3. Add Services or Packages with short, scannable copy. Status: editable Services section added.
+4. Add a Location section with practical contact/location details.
+5. Add FAQ for common friction points.
+6. Add Testimonials only when real quotes are available.
 
 Notes:
 - Keep each section static first unless the owner truly needs to edit it immediately.
 - Convert a section to editable `site_content` only when admin editing is needed.
 - Keep the primary contact CTA visible and repeated naturally.
+- Homepage section order is now admin-controlled through `/admin/sections`.
 
 ## Phase 2 - Image Pipeline And Gallery
 
@@ -62,7 +64,8 @@ Goal:
 Make admin editing consistent as more sections become editable.
 
 Work:
-- Extract shared content loading/saving patterns once at least two editable sections exist.
+- Status: started with separate Hero, About, Services, and Slider editors plus a section order screen.
+- Extract shared content loading/saving patterns once the current editor repetition starts slowing changes down.
 - Introduce `useContent` only when it removes real repetition.
 - Introduce reusable form fields and status messages after repeated admin forms appear.
 - Add content restore/history UI only after owners have enough content to make mistakes costly.

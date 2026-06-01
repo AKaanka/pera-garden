@@ -166,6 +166,52 @@ p {
   line-height: 1.6;
 }
 
+.services-section {
+  background: #f5efe6;
+}
+
+.services-shell {
+  display: grid;
+  gap: 32px;
+}
+
+.services-heading {
+  max-width: 640px;
+}
+
+.services-heading h2 {
+  max-width: 12ch;
+}
+
+.services-list {
+  border-top: 1px solid #e7dbcd;
+  display: grid;
+}
+
+.service-item {
+  border-bottom: 1px solid #e7dbcd;
+  display: grid;
+  gap: 8px;
+  padding: 22px 0;
+}
+
+.service-item span {
+  color: var(--color-accent);
+  font-weight: 700;
+}
+
+.service-item h3 {
+  color: var(--color-ink);
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.35rem;
+  font-weight: 500;
+  margin: 0;
+}
+
+.service-item p {
+  margin: 0;
+}
+
 .slider-section {
   background: var(--color-surface);
 }
@@ -288,6 +334,11 @@ textarea {
 
 .form-status.is-error {
   background: #fae9e5;
+}
+
+.form-status.is-warning {
+  background: #fff4d8;
+  color: #6c5221;
 }
 
 .honeypot {
@@ -414,14 +465,14 @@ textarea {
 }
 
 .section-order-item {
-  align-items: center;
+  align-items: start;
   background: #fffdf8;
   border: 1px solid #e7dbcd;
   border-radius: var(--radius);
   cursor: grab;
   display: grid;
   gap: 14px;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: auto 1fr;
   padding: 16px;
 }
 
@@ -441,6 +492,20 @@ textarea {
 .drag-handle {
   color: var(--color-accent);
   font-weight: 700;
+}
+
+.section-order-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  grid-column: 2;
+  justify-content: flex-end;
+}
+
+.secondary-button:disabled,
+.primary-action:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
 }
 
 .editor-group {
@@ -562,6 +627,11 @@ textarea {
     grid-template-columns: 0.92fr 1.08fr;
   }
 
+  .services-shell {
+    align-items: start;
+    grid-template-columns: 0.85fr 1.15fr;
+  }
+
   .about-highlights {
     border-top: 0;
   }
@@ -569,6 +639,15 @@ textarea {
   .slider-shell {
     align-items: center;
     grid-template-columns: 0.88fr 1.12fr;
+  }
+
+  .section-order-item {
+    align-items: center;
+    grid-template-columns: auto 1fr auto;
+  }
+
+  .section-order-actions {
+    grid-column: auto;
   }
 
   .admin-page {

@@ -2,7 +2,7 @@ export type Locale = "tr" | "en";
 
 export type SectionStatus = "draft" | "published";
 
-export type SectionKey = "hero" | "about" | "slider";
+export type SectionKey = "hero" | "about" | "services" | "slider";
 
 export type HeroImage = {
   bucket: "hero";
@@ -37,6 +37,20 @@ export type AboutLocaleContent = {
 
 export type AboutContent = LocalizedContent<AboutLocaleContent>;
 
+export type ServicesItem = {
+  title: string;
+  description: string;
+};
+
+export type ServicesLocaleContent = {
+  eyebrow: string;
+  title: string;
+  subtitle: string;
+  items: ServicesItem[];
+};
+
+export type ServicesContent = LocalizedContent<ServicesLocaleContent>;
+
 export type SliderItem = {
   title: string;
   description: string;
@@ -54,6 +68,7 @@ export type SliderContent = LocalizedContent<SliderLocaleContent>;
 export type SectionContentMap = {
   hero: HeroContent;
   about: AboutContent;
+  services: ServicesContent;
   slider: SliderContent;
 };
 

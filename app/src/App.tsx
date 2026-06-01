@@ -9,7 +9,7 @@ import { useAdminAccess } from "./hooks/useAdminAccess";
 import { useAuth } from "./hooks/useAuth";
 import type { SectionKey } from "./types";
 
-const sectionKeys: SectionKey[] = ["hero", "about", "slider"];
+const sectionKeys: SectionKey[] = ["hero", "about", "services", "slider"];
 
 function parseSectionKey(pathname: string): SectionKey | null {
   const sectionKey = pathname.split("/").filter(Boolean).at(-1);

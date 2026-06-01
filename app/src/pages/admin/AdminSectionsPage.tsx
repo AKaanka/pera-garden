@@ -15,6 +15,7 @@ function moveRow(rows: SiteContentRow[], fromIndex: number, toIndex: number) {
 export function AdminSectionsPage() {
   const [rows, setRows] = useState<SiteContentRow[]>([]);
   const [draggedKey, setDraggedKey] = useState<SectionKey | "">("");
+  const [hasUnsavedOrder, setHasUnsavedOrder] = useState(false);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [status, setStatus] = useState("");
@@ -27,6 +28,7 @@ export function AdminSectionsPage() {
 
     try {
       setRows(await getAdminSectionRows());
+      setHasUnsavedOrder(false);
     } catch (error) {
       setStatusType("error");
       setStatus(error instanceof Error ? error.message : "Could not load sections.");
@@ -58,6 +60,21 @@ export function AdminSectionsPage() {
         return currentRows;
       }
 
+      setHasUnsavedOrder(true);
+      return moveRow(currentRows, fromIndex, toIndex);
+    });
+  };
+
+  const moveSection = (sectionKey: SectionKey, direction: -1 | 1) => {
+    setRows((currentRows) => {
+      const fromIndex = currentRows.findIndex((row) => row.section_key === sectionKey);
+      const toIndex = fromIndex + direction;
+
+      if (fromIndex < 0 || toIndex < 0 || toIndex >= currentRows.length) {
+        return currentRows;
+      }
+
+      setHasUnsavedOrder(true);
       return moveRow(currentRows, fromIndex, toIndex);
     });
   };
@@ -69,6 +86,7 @@ export function AdminSectionsPage() {
 
     try {
       await saveSectionOrder(rows.map((row) => row.section_key));
+      setHasUnsavedOrder(false);
       setStatus("Section order saved.");
     } catch (error) {
       setStatusType("error");
@@ -89,13 +107,24 @@ export function AdminSectionsPage() {
           <p className="eyebrow">Homepage</p>
           <h1>Sections</h1>
         </div>
-        <button className="primary-action compact-action" disabled={saving} type="button" onClick={saveOrder}>
+        <button
+          className="primary-action compact-action"
+          disabled={saving || !hasUnsavedOrder}
+          type="button"
+          onClick={saveOrder}
+        >
           {saving ? "Saving..." : "Save order"}
         </button>
       </header>
 
+      {hasUnsavedOrder ? (
+        <p className="form-status is-warning" role="status">
+          Order changed. Save to update the public page.
+        </p>
+      ) : null}
+
       <div className="section-order-list" aria-label="Homepage section order">
-        {rows.map((row) => (
+        {rows.map((row, index) => (
           <article
             className="section-order-item"
             draggable
@@ -111,9 +140,27 @@ export function AdminSectionsPage() {
               <h2>{sectionLabels[row.section_key]}</h2>
               <p>Position {row.order_index + 1}</p>
             </div>
-            <a className="secondary-button" href={`/admin/sections/${row.section_key}`}>
-              Edit
-            </a>
+            <div className="section-order-actions">
+              <button
+                className="secondary-button compact-action"
+                disabled={index === 0}
+                type="button"
+                onClick={() => moveSection(row.section_key, -1)}
+              >
+                Up
+              </button>
+              <button
+                className="secondary-button compact-action"
+                disabled={index === rows.length - 1}
+                type="button"
+                onClick={() => moveSection(row.section_key, 1)}
+              >
+                Down
+              </button>
+              <a className="secondary-button compact-action" href={`/admin/sections/${row.section_key}`}>
+                Edit
+              </a>
+            </div>
           </article>
         ))}
       </div>

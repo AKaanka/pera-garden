@@ -2,6 +2,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import {
   fallbackAboutContent,
   fallbackHeroContent,
+  fallbackServicesContent,
   fallbackSliderContent,
   getAdminSectionRow,
   publishSection,
@@ -13,6 +14,8 @@ import type {
   AboutHighlight,
   HeroContent,
   Locale,
+  ServicesContent,
+  ServicesItem,
   SectionContentMap,
   SectionKey,
   SliderContent,
@@ -28,6 +31,7 @@ type AdminSectionEditorPageProps = {
 const fallbackBySection: SectionContentMap = {
   hero: fallbackHeroContent,
   about: fallbackAboutContent,
+  services: fallbackServicesContent,
   slider: fallbackSliderContent,
 };
 
@@ -301,6 +305,120 @@ function SliderFields({
   );
 }
 
+function ServicesFields({
+  activeLocale,
+  content,
+  setContent,
+}: {
+  activeLocale: Locale;
+  content: ServicesContent;
+  setContent: (content: ServicesContent) => void;
+}) {
+  const services = content[activeLocale];
+
+  const updateLocale = (field: keyof Omit<typeof services, "items">, value: string) => {
+    setContent({
+      ...content,
+      [activeLocale]: {
+        ...services,
+        [field]: value,
+      },
+    });
+  };
+
+  const updateItem = (index: number, field: keyof ServicesItem, value: string) => {
+    const items = [...services.items];
+    items[index] = {
+      ...items[index],
+      [field]: value,
+    };
+
+    setContent({
+      ...content,
+      [activeLocale]: {
+        ...services,
+        items,
+      },
+    });
+  };
+
+  const addItem = () => {
+    const blankItem =
+      activeLocale === "tr"
+        ? {
+            title: "Yeni hizmet",
+            description: "Bu hizmet için kısa bir açıklama yazın.",
+          }
+        : {
+            title: "New service",
+            description: "Write a short description for this service.",
+          };
+
+    setContent({
+      ...content,
+      [activeLocale]: {
+        ...services,
+        items: [...services.items, blankItem],
+      },
+    });
+  };
+
+  const removeItem = (index: number) => {
+    setContent({
+      ...content,
+      [activeLocale]: {
+        ...services,
+        items: services.items.filter((_item, itemIndex) => itemIndex !== index),
+      },
+    });
+  };
+
+  return (
+    <>
+      <Field label="Eyebrow">
+        <input value={services.eyebrow} onChange={(event) => updateLocale("eyebrow", event.target.value)} />
+      </Field>
+      <Field label="Title">
+        <input value={services.title} onChange={(event) => updateLocale("title", event.target.value)} />
+      </Field>
+      <Field label="Subtitle">
+        <textarea
+          rows={4}
+          value={services.subtitle}
+          onChange={(event) => updateLocale("subtitle", event.target.value)}
+        />
+      </Field>
+      <div className="editor-group">
+        <div className="editor-group-header">
+          <h2>Services</h2>
+          <button className="secondary-button" type="button" onClick={addItem}>
+            Add service
+          </button>
+        </div>
+        {services.items.map((item, index) => (
+          <div className="editor-nested" key={`${item.title}-${index}`}>
+            <Field label="Title">
+              <input value={item.title} onChange={(event) => updateItem(index, "title", event.target.value)} />
+            </Field>
+            <Field label="Description">
+              <textarea
+                rows={3}
+                value={item.description}
+                onChange={(event) => updateItem(index, "description", event.target.value)}
+              />
+            </Field>
+            {services.items.length > 1 ? (
+              <button className="secondary-button" type="button" onClick={() => removeItem(index)}>
+                Remove service
+              </button>
+            ) : null}
+          </div>
+        ))}
+      </div>
+    </>
+  );
+}
+
 export function AdminSectionEditorPage({ sectionKey }: AdminSectionEditorPageProps) {
   const [content, setContent] = useState<SectionContentMap[SectionKey]>(fallbackBySection[sectionKey]);
   const [activeLocale, setActiveLocale] = useState<Locale>("tr");
@@ -425,6 +543,13 @@ export function AdminSectionEditorPage({ sectionKey }: AdminSectionEditorPagePro
           <SliderFields
             activeLocale={activeLocale}
             content={content as SliderContent}
+            setContent={(nextContent) => setContent(nextContent)}
+          />
+        ) : null}
+        {sectionKey === "services" ? (
+          <ServicesFields
+            activeLocale={activeLocale}
+            content={content as ServicesContent}
             setContent={(nextContent) => setContent(nextContent)}
           />
         ) : null}

@@ -151,3 +151,18 @@ Consequences:
 - New feature ideas should be labeled MVP-critical, V1, or backlog.
 - Favor one polished section or workflow over several partial features.
 - Use `.agents/tasks/feature.md` before starting broad new product work.
+
+## ADR-011 - Homepage Sections Are Ordered In `site_content`
+
+Status: accepted
+
+Decision:
+Use `site_content.order_index` as the source of truth for homepage section display order. Admin changes from `/admin/sections` update both draft and published rows for each section. Current editable homepage sections are Hero, About, Services, and Slider.
+
+Why:
+The owner needs a simple view-order control without a separate layout table. The current content model is small enough for section order to live with the editable section rows.
+
+Consequences:
+- Public homepage rendering should read published sections ordered by `order_index`.
+- Admin ordering should remain simple and explicit, with a save action before the public page changes.
+- Revisit a separate layout model only if sections gain independent scheduling, per-locale ordering, or reusable blocks.

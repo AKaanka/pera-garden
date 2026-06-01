@@ -2,6 +2,7 @@ import type {
   AboutContent,
   AnySectionContent,
   HeroContent,
+  ServicesContent,
   SectionContentMap,
   SectionKey,
   SiteContentRow,
@@ -81,6 +82,49 @@ export const fallbackAboutContent: AboutContent = {
   },
 };
 
+export const fallbackServicesContent: ServicesContent = {
+  tr: {
+    eyebrow: "Hizmetler",
+    title: "Davetiniz için temel hazırlıklar",
+    subtitle:
+      "Pera Garden, düğün gününüzün ana ihtiyaçlarını tek bahçe akışında sade ve anlaşılır şekilde planlar.",
+    items: [
+      {
+        title: "Nikâh ve karşılama alanı",
+        description: "Misafir gelişi, tören düzeni ve ilk karşılama anları için planlanan açık hava kullanımı.",
+      },
+      {
+        title: "Yemek ve servis akışı",
+        description: "Davet ritmine uygun masa düzeni, servis planı ve ekip koordinasyonu.",
+      },
+      {
+        title: "Müzik ve kutlama düzeni",
+        description: "Günün finalini taşıyan dans, müzik ve kutlama alanı için pratik yerleşim.",
+      },
+    ],
+  },
+  en: {
+    eyebrow: "Services",
+    title: "Essentials for your celebration",
+    subtitle:
+      "Pera Garden keeps the main wedding-day needs clear, coordinated, and easy to follow in one garden flow.",
+    items: [
+      {
+        title: "Ceremony and welcome area",
+        description: "Outdoor use planned for guest arrival, ceremony layout, and the first welcome moments.",
+      },
+      {
+        title: "Dinner and service flow",
+        description: "Table layout, service planning, and team coordination shaped around the celebration rhythm.",
+      },
+      {
+        title: "Music and celebration setup",
+        description: "A practical layout for dancing, music, and the closing energy of the day.",
+      },
+    ],
+  },
+};
+
 export const fallbackSliderContent: SliderContent = {
   tr: {
     eyebrow: "Davet akışı",
@@ -127,14 +171,16 @@ export const fallbackSliderContent: SliderContent = {
 const fallbackContent: SectionContentMap = {
   hero: fallbackHeroContent,
   about: fallbackAboutContent,
+  services: fallbackServicesContent,
   slider: fallbackSliderContent,
 };
 
-const fallbackOrder: SectionKey[] = ["hero", "about", "slider"];
+const fallbackOrder: SectionKey[] = ["hero", "about", "services", "slider"];
 
 export const sectionLabels: Record<SectionKey, string> = {
   hero: "Hero",
   about: "About",
+  services: "Services",
   slider: "Slider",
 };
 
@@ -199,6 +245,23 @@ function normalizeSliderContent(content: unknown): SliderContent {
   };
 }
 
+function normalizeServicesContent(content: unknown): ServicesContent {
+  const candidate = content as Partial<ServicesContent> | null;
+
+  return {
+    tr: {
+      ...fallbackServicesContent.tr,
+      ...(candidate?.tr ?? {}),
+      items: candidate?.tr?.items?.length ? candidate.tr.items : fallbackServicesContent.tr.items,
+    },
+    en: {
+      ...fallbackServicesContent.en,
+      ...(candidate?.en ?? {}),
+      items: candidate?.en?.items?.length ? candidate.en.items : fallbackServicesContent.en.items,
+    },
+  };
+}
+
 export function normalizeSectionContent<TKey extends SectionKey>(
   sectionKey: TKey,
   content: unknown,
@@ -209,6 +272,10 @@ export function normalizeSectionContent<TKey extends SectionKey>(
 
   if (sectionKey === "slider") {
     return normalizeSliderContent(content) as SectionContentMap[TKey];
+  }
+
+  if (sectionKey === "services") {
+    return normalizeServicesContent(content) as SectionContentMap[TKey];
   }
 
   return normalizeHeroContent(content) as SectionContentMap[TKey];

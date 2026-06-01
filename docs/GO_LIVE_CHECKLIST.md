@@ -29,9 +29,12 @@ Use this before treating the MVP as production-ready. A checked item should mean
 ## 3. Supabase Data And Security
 
 - [ ] MVP migration is applied to the target project.
+- [ ] Editable sections migration is applied to the target project.
 - [ ] `supabase/verify.sql` or `supabase/verify_compact.sql` passes.
 - [ ] Public anon read can fetch published Hero content.
+- [ ] Public anon read can fetch published About, Services, and Slider content.
 - [ ] Public anon read cannot fetch draft Hero content.
+- [ ] Public anon read cannot fetch draft About, Services, or Slider content.
 - [ ] Public anon cannot read submissions.
 - [ ] Authenticated admin can read submissions.
 - [ ] Hero Storage bucket exists and is public-read.
@@ -61,6 +64,11 @@ Use this before treating the MVP as production-ready. A checked item should mean
 - [ ] Admin Hero editor can save draft.
 - [ ] Admin Hero editor can publish.
 - [ ] Published Hero appears on the public homepage.
+- [ ] Admin About editor can save draft and publish.
+- [ ] Admin Services editor can save draft and publish.
+- [ ] Admin Slider editor can save draft and publish.
+- [ ] Admin section order can be changed and saved from `/admin/sections`.
+- [ ] Published homepage section order matches the admin order.
 - [ ] Admin submissions list loads.
 - [ ] Failed WhatsApp submissions show retry action.
 

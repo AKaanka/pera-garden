@@ -2,9 +2,17 @@ import { useEffect, useState } from "react";
 import { About } from "../sections/About";
 import { ContactForm } from "../sections/ContactForm";
 import { Hero } from "../sections/Hero";
+import { Services } from "../sections/Services";
 import { Slider } from "../sections/Slider";
 import { getPublishedSections } from "../services/supabase/content";
-import type { AboutContent, HeroContent, Locale, SiteContentRow, SliderContent } from "../types";
+import type {
+  AboutContent,
+  HeroContent,
+  Locale,
+  ServicesContent,
+  SiteContentRow,
+  SliderContent,
+} from "../types";
 
 type HomeState = {
   loading: boolean;
@@ -19,6 +27,10 @@ function renderSection(row: SiteContentRow, locale: Locale) {
 
   if (row.section_key === "slider") {
     return <Slider content={row.content as SliderContent} key={row.id} locale={locale} />;
+  }
+
+  if (row.section_key === "services") {
+    return <Services content={row.content as ServicesContent} key={row.id} locale={locale} />;
   }
 
   return <Hero content={row.content as HeroContent} key={row.id} locale={locale} />;
