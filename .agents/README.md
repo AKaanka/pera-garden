@@ -52,6 +52,7 @@ This folder contains repo-specific guidance for working on **Pera Garden**, a dy
 - `../docs/BUILD_READY_SPEC.md` — MVP scope, contracts, and V1 boundary
 - `../docs/DECISIONS.md` — accepted architecture and product decisions
 - `../docs/ROADMAP.md` — recommended build sequence after the MVP slice
+- `../docs/PHASE_0_AUDIT.md` — current MVP hardening audit and launch blockers
 - `../docs/SUPABASE_SETUP.md` — target project setup and verification runbook
 - `../docs/GO_LIVE_CHECKLIST.md` — production readiness checklist
 
