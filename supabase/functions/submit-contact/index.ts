@@ -18,8 +18,41 @@ type RateLimitResult = {
   retryAfterSeconds?: number;
 };
 
+type Locale = "tr" | "en";
+
 const TEN_MINUTES_MS = 10 * 60 * 1000;
 const ONE_HOUR_MS = 60 * 60 * 1000;
+
+const messages = {
+  tr: {
+    configError: "Iletisim formu henuz hazir degil.",
+    fallbackError: "Bir seyler ters gitti. Lutfen tekrar deneyin.",
+    firstNameRequired: "Lutfen adinizi girin.",
+    formRejected: "Istek reddedildi.",
+    lastNameRequired: "Lutfen soyadinizi girin.",
+    messageTooLong: "Lutfen 2000 karakteri asmayan bir mesaj yazin.",
+    phoneInvalid: "Lutfen gecerli bir telefon numarasi girin.",
+    rateLimited: "Lutfen tekrar denemeden once birkac dakika bekleyin.",
+    submitted: "Tesekkurler! Kisa sure icinde WhatsApp uzerinden donus yapacagiz.",
+    turnstileFailed: "Istegi dogrulayamadik. Lutfen tekrar deneyin.",
+    validationError: "Lutfen isaretli alanlari kontrol edin.",
+    whatsappQueued: "Tesekkurler! Talebiniz alindi.",
+  },
+  en: {
+    configError: "The contact form is not configured yet.",
+    fallbackError: "Something went wrong. Please try again.",
+    firstNameRequired: "Enter a first name.",
+    formRejected: "Request rejected.",
+    lastNameRequired: "Enter a last name.",
+    messageTooLong: "Enter a message up to 2000 characters.",
+    phoneInvalid: "Enter a valid phone number.",
+    rateLimited: "Please wait a few minutes before trying again.",
+    submitted: "Thanks! We'll reach out on WhatsApp shortly.",
+    turnstileFailed: "We could not verify the request. Please try again.",
+    validationError: "Please check the highlighted fields.",
+    whatsappQueued: "Thanks! Your request was received.",
+  },
+} satisfies Record<Locale, Record<string, string>>;
 
 function cleanText(value: unknown): string {
   return typeof value === "string" ? value.trim() : "";
@@ -156,14 +189,17 @@ Deno.serve(async (request) => {
     return jsonResponse({ ok: false, code: "METHOD_NOT_ALLOWED" }, 405);
   }
 
+  const body = await request.json().catch((): ContactRequest => ({}));
+  const locale: Locale = cleanText(body.locale) === "en" ? "en" : "tr";
+  const copy = messages[locale];
+
   const supabaseUrl = Deno.env.get("SUPABASE_URL");
   const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-
   if (!supabaseUrl || !serviceRoleKey) {
     return jsonResponse({
       ok: false,
       code: "SERVER_CONFIG_ERROR",
-      message: "The contact form is not configured yet.",
+      message: copy.configError,
     }, 500);
   }
 
@@ -173,7 +209,6 @@ Deno.serve(async (request) => {
     },
   });
 
-  const body = await request.json().catch((): ContactRequest => ({}));
   const ip = getClientIp(request);
   const fields: Record<string, string> = {};
 
@@ -181,9 +216,9 @@ Deno.serve(async (request) => {
     return jsonResponse({
       ok: false,
       code: "VALIDATION_ERROR",
-      message: "Please check the highlighted fields.",
+      message: copy.validationError,
       fields: {
-        form: "Request rejected.",
+        form: copy.formRejected,
       },
     }, 400);
   }
@@ -192,33 +227,32 @@ Deno.serve(async (request) => {
   const lastName = cleanText(body.lastName);
   const phone = cleanText(body.phone);
   const message = cleanText(body.message);
-  const locale = cleanText(body.locale) === "en" ? "en" : "tr";
   const turnstileToken = cleanText(body.turnstileToken);
 
   if (!firstName || firstName.length > 80) {
-    fields.firstName = "Enter a first name.";
+    fields.firstName = copy.firstNameRequired;
   }
 
   if (!lastName || lastName.length > 80) {
-    fields.lastName = "Enter a last name.";
+    fields.lastName = copy.lastNameRequired;
   }
 
   const phoneNumber = parsePhoneNumberFromString(phone, "TR");
   const phoneNormalized = phoneNumber?.isValid() ? phoneNumber.number : "";
 
   if (!phoneNormalized) {
-    fields.phone = "Enter a valid phone number.";
+    fields.phone = copy.phoneInvalid;
   }
 
   if (!message || message.length > 2000) {
-    fields.message = "Enter a message up to 2000 characters.";
+    fields.message = copy.messageTooLong;
   }
 
   if (Object.keys(fields).length > 0) {
     return jsonResponse({
       ok: false,
       code: "VALIDATION_ERROR",
-      message: "Please check the highlighted fields.",
+      message: copy.validationError,
       fields,
     }, 400);
   }
@@ -232,7 +266,7 @@ Deno.serve(async (request) => {
       return jsonResponse({
         ok: false,
         code: "SERVER_CONFIG_ERROR",
-        message: "The contact form is not configured yet.",
+        message: copy.configError,
       }, 500);
     }
 
@@ -247,7 +281,7 @@ Deno.serve(async (request) => {
       return jsonResponse({
         ok: false,
         code: "RATE_LIMITED",
-        message: "Please wait a few minutes before trying again.",
+        message: copy.rateLimited,
         retryAfterSeconds: activeLimit.retryAfterSeconds ?? 600,
       }, 429);
     }
@@ -258,7 +292,7 @@ Deno.serve(async (request) => {
       return jsonResponse({
         ok: false,
         code: "TURNSTILE_FAILED",
-        message: "We could not verify the request. Please try again.",
+        message: copy.turnstileFailed,
       }, 403);
     }
 
@@ -314,7 +348,7 @@ Deno.serve(async (request) => {
         code: "WHATSAPP_QUEUED_RETRY",
         submissionId: submission.id,
         whatsappStatus: "failed",
-        message: "Thanks! Your request was received.",
+        message: copy.whatsappQueued,
       }, 202);
     }
 
@@ -323,7 +357,7 @@ Deno.serve(async (request) => {
       code: "SUBMITTED",
       submissionId: submission.id,
       whatsappStatus: "sent",
-      message: "Thanks! We'll reach out on WhatsApp shortly.",
+      message: copy.submitted,
     });
   } catch (error) {
     console.error(error);
@@ -331,7 +365,7 @@ Deno.serve(async (request) => {
     return jsonResponse({
       ok: false,
       code: "SERVER_ERROR",
-      message: "Something went wrong. Please try again.",
+      message: copy.fallbackError,
     }, 500);
   }
 });

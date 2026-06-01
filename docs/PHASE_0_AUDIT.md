@@ -25,6 +25,8 @@ An `sbp_...` Supabase token was shared in chat. Treat it as compromised. Do not 
 - Repository scan did not find the shared `sbp_` token committed to project files.
 - No service-role key, WhatsApp token, Turnstile secret, or rate-limit pepper is committed in project files.
 - Git working tree is clean after the local dependency repair.
+- Public contact form labels, button text, and local fallback messages are Turkish-first with English fallback.
+- `submit-contact` validation, rate-limit, Turnstile, queued, and success responses are locale-aware.
 
 ## Local Environment Repair Performed
 
@@ -66,7 +68,7 @@ These items need dashboard, MCP, or CLI access after token rotation:
 - Production Hero image is still not confirmed.
 - Final Turkish public copy is still not confirmed.
 - Public homepage has only Hero and ContactForm, which is acceptable for MVP but thin for real conversion.
-- Contact form labels are currently English while surrounding section copy is Turkish. This should be localized before launch.
+- The updated `submit-contact` function must be redeployed before hosted validation/success messages reflect the localized copy.
 
 ## Recommended Next Actions
 
@@ -76,5 +78,5 @@ These items need dashboard, MCP, or CLI access after token rotation:
 4. Set real Turnstile and WhatsApp secrets.
 5. Disable `ALLOW_MISSING_TURNSTILE`.
 6. Run `supabase/verify_compact.sql` against the target project.
-7. Test one real production-style contact submission.
-8. Localize the visible contact form labels and success/error copy to Turkish before launch.
+7. Deploy the updated `submit-contact` Edge Function.
+8. Test one real production-style contact submission.

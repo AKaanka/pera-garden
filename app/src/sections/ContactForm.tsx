@@ -8,6 +8,29 @@ type ContactFormProps = {
   locale: Locale;
 };
 
+const copy = {
+  tr: {
+    configError: "Iletisim formu henuz hazir degil.",
+    fallbackError: "Bir seyler ters gitti. Lutfen tekrar deneyin.",
+    firstName: "Ad",
+    lastName: "Soyad",
+    phone: "Telefon",
+    message: "Mesaj",
+    submitting: "Gonderiliyor...",
+    submit: "Rezervasyon istegi gonder",
+  },
+  en: {
+    configError: "Contact form is not configured yet.",
+    fallbackError: "Something went wrong. Please try again.",
+    firstName: "First name",
+    lastName: "Last name",
+    phone: "Phone",
+    message: "Message",
+    submitting: "Sending...",
+    submit: "Send request",
+  },
+} satisfies Record<Locale, Record<string, string>>;
+
 const initialPayload: ContactFormPayload = {
   firstName: "",
   lastName: "",
@@ -27,6 +50,7 @@ export function ContactForm({ locale }: ContactFormProps) {
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [message, setMessage] = useState("");
   const turnstileSiteKey = import.meta.env.VITE_TURNSTILE_SITE_KEY ?? "";
+  const formCopy = copy[locale];
 
   const updateField = (field: keyof ContactFormPayload, value: string) => {
     setPayload((current) => ({
@@ -51,7 +75,7 @@ export function ContactForm({ locale }: ContactFormProps) {
 
     if (!isSupabaseConfigured) {
       setStatus("error");
-      setMessage("Contact form is not configured yet.");
+      setMessage(formCopy.configError);
       return;
     }
 
@@ -80,7 +104,7 @@ export function ContactForm({ locale }: ContactFormProps) {
       });
     } catch (error) {
       setStatus("error");
-      setMessage(error instanceof Error ? error.message : "Something went wrong.");
+      setMessage(error instanceof Error ? error.message : formCopy.fallbackError);
     }
   };
 
@@ -107,7 +131,7 @@ export function ContactForm({ locale }: ContactFormProps) {
           />
 
           <label>
-            First name
+            {formCopy.firstName}
             <input
               autoComplete="given-name"
               value={payload.firstName}
@@ -117,7 +141,7 @@ export function ContactForm({ locale }: ContactFormProps) {
           </label>
 
           <label>
-            Last name
+            {formCopy.lastName}
             <input
               autoComplete="family-name"
               value={payload.lastName}
@@ -127,7 +151,7 @@ export function ContactForm({ locale }: ContactFormProps) {
           </label>
 
           <label>
-            Phone
+            {formCopy.phone}
             <input
               autoComplete="tel"
               inputMode="tel"
@@ -138,7 +162,7 @@ export function ContactForm({ locale }: ContactFormProps) {
           </label>
 
           <label>
-            Message
+            {formCopy.message}
             <textarea
               rows={5}
               value={payload.message}
@@ -158,7 +182,7 @@ export function ContactForm({ locale }: ContactFormProps) {
           ) : null}
 
           <button className="primary-action form-button" disabled={status === "submitting"} type="submit">
-            {status === "submitting" ? "Sending..." : "Send request"}
+            {status === "submitting" ? formCopy.submitting : formCopy.submit}
           </button>
         </form>
       </div>
