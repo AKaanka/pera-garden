@@ -14,4 +14,4 @@ set
     to_jsonb('Pera Garden düğün alanı'::text)
   )
 where section_key = 'hero'
-  and content #>> '{tr,title}' = 'Dugununuz icin zamansiz bir bahce';
+  and content #>> '{tr,title}' in ('Dugununuz icin zamansiz bir bahce', 'Deneme');
