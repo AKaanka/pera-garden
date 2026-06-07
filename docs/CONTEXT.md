@@ -24,10 +24,10 @@ Owner edits Hero draft in `/admin` → publishes → visitor sees it → visitor
 
 - Ref: `xaxlsqddnoblcgdqlrmh` · URL: `https://xaxlsqddnoblcgdqlrmh.supabase.co` · Region: EU/Frankfurt
 
-## Live state (as of 2026-06-05)
+## Live state (as of 2026-06-07)
 
-- ✅ Local `lint` + `build` pass.
-- ⚠️ Worktree has in-progress changes; review/stage intentionally before deploy or handoff.
+- ✅ Local `lint` + `build` pass; dev server renders the public homepage cleanly.
+- ✅ Post-MVP work is committed on branch `feat/editable-sections-and-go-live-prep` (seven themed commits) and passed a pre-merge review with no P0/P1 findings. Not yet merged to `main` or applied to target.
 - ✅ Target has MVP + pre-Gallery editable-section + security-cleanup migrations applied. RLS on all target tables. Hero/About/Services/Slider/Location/FAQ are editable + orderable via `/admin/sections`.
 - ⚠️ Local code/migrations also support Gallery photo/video management, whole-section Hide/Show, admin-created `custom_*` sections, desktop-arrow/mobile-swipe gallery viewing, editable Chrome/Header/Footer, editable direct-contact actions (Instagram/phone/WhatsApp/Google Maps), editable Contact/Rezervasyon copy and labels, and locale-aware contact-form verification states. These newer migrations are pending target application until the active Supabase account/project is confirmed.
 - ✅ Local verification scripts now expect the full built-in section set through Contact, check Chrome direct-contact fields and Contact form-copy fields, and require admin access to at least 18 section rows after the full local migration set is applied. Chrome/Contact migrations backfill missing JSON keys without overwriting owner-edited values.

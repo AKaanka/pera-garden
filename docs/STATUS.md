@@ -1,10 +1,11 @@
 # Pera Garden — Status & Go-Live
 
-Single source of truth for production readiness. A checked item = verified against the **target project + deployed frontend**, not just configured locally. Last audit: 2026-06-05.
+Single source of truth for production readiness. A checked item = verified against the **target project + deployed frontend**, not just configured locally. Last audit: 2026-06-07.
 
 ## Snapshot
-- ✅ Local `lint` + `build` pass on 2026-06-05 after the latest in-progress app changes.
-- ⚠️ Worktree has in-progress changes; review/stage intentionally before deploy or handoff.
+- ✅ Local `lint` + `build` pass on 2026-06-07; the running dev server renders the public homepage with no console errors.
+- ✅ The post-MVP work (editable sections, Gallery, Chrome, Contact, translation) is committed on branch `feat/editable-sections-and-go-live-prep` in seven themed commits — no longer an uncommitted worktree.
+- ✅ Pre-merge review passed (2026-06-07, `workflows/review.md`): contact stays Edge-Function-only; anon reads are RLS-limited to visible+published `site_content`; Gallery/Chrome storage writes require `app_private.is_admin()`; the cumulative `section_key` check constraint includes all prior keys in migration order; no secrets in the frontend. No P0/P1 findings. Still verified locally only — target application + a real submission remain the production gate.
 - ✅ Target has the MVP + pre-Gallery editable-section migrations applied; newer Gallery/Chrome/Contact migrations are local/pending target application.
 - ✅ Both Edge Functions deployed; pepper set.
 - ✅ Expanded `verify_compact.sql` passed on target for the pre-Gallery six editable sections; Gallery/Chrome/Contact verification remains local until their newer migrations are applied.
