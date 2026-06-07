@@ -2,79 +2,29 @@
 description: Entry workflow for routing Pera Garden work to the right specialist path
 ---
 
-# Pera Garden - Orchestrator Workflow
+# Pera Garden — Orchestrator
 
-Use this first when a request is more than a quick factual answer. The orchestrator's job is to classify the work, choose the right workflow, keep scope small, and make sure verification matches the risk.
+Use first when a request is more than a quick factual answer. Job: classify, route, keep scope small, match verification to risk.
 
-## 1. Classify The Request
+**Always load `docs/CONTEXT.md` first** (invariants + live state). Load other files on demand per the table below — never bulk-read the doc set.
 
-Pick the primary mode before touching files:
+## Routing table
 
-- **Brainstorm** - shaping product, UX, copy, or feature scope before implementation.
-- **Structure** - changing folders, boundaries, hooks, shared components, or agent workflow docs.
-- **Build** - implementing a frontend or full-stack feature inside the current architecture.
-- **Backend** - changing migrations, RLS, Storage policies, Edge Functions, secrets, or data contracts.
-- **Deploy** - preparing or checking production rollout.
-- **Review** - evaluating existing code or plans for bugs, risks, and missing checks.
+| Mode | Use when | Owner | Load on demand | Verify |
+|------|----------|-------|----------------|--------|
+| **Brainstorm** | Shaping product/UX/copy/scope pre-build | — | `workflows/brainstorm.md`, current section/page, `docs/SETUP.md` §Contracts | Read changed Markdown; confirm links/paths |
+| **Structure** | Folders, boundaries, hooks, shared components, agent/workflow docs | structure wf + this file | `workflows/struct.md`, current folders, `docs/DECISIONS.md` | Read changed Markdown; confirm links/paths |
+| **Build** | Frontend/full-stack feature in current architecture | CAN / frontend skill | `skills/frontend/SKILL.md`, `rules/design.md`, touched app files + CSS | `npm run lint` + `build`; mobile-first check; admin states (unauth/admin/non-admin); contact form paths |
+| **Backend** | Migrations, RLS, Storage, Edge Functions, secrets, data contracts | Kaan / backend skill | `skills/backend/SKILL.md`, relevant migration + Edge Function + frontend caller, `docs/SETUP.md` §Contracts | Migration order; RLS behavior; function contract; `supabase/verify_compact.sql` |
+| **Deploy** | Production rollout prep/check | deploy wf | `workflows/deploy.md`, `docs/SETUP.md`, `docs/STATUS.md` | Rollout order; secrets; rollback note; post-deploy smoke test |
+| **Review** | Evaluating code/plans for bugs, risk, missing checks | — | Changed files, contracts they depend on, `docs/STATUS.md` | Re-run the checks that prove the changed contracts |
 
-If the request crosses modes, keep one primary mode and name the secondary mode. Example: "Build primary, Backend secondary."
+Cross-mode: keep one primary, name the secondary (e.g. "Build primary, Backend secondary"). For UI+backend contracts, read both skills and let frontend contract meet backend safety in the service layer.
 
-## 2. Load The Right Context
+## Scope (before implementing)
+Identify: user-facing outcome · owner/admin outcome (if any) · whether Supabase data/RLS/Storage/Functions/secrets are touched · MVP-critical vs V1 vs backlog · the smallest change that leaves the next contributor better off.
 
-Always read only what the mode needs:
+Invariants (free-tier only, secrets-never-in-Vite, Edge-Function-only contact, admin = active profile, anon reads published only) live in `docs/CONTEXT.md` — respect them; don't restate them. When in doubt, preserve the current MVP vertical slice over expanding architecture.
 
-- Frontend/UI work: `skills/frontend/SKILL.md`, `rules/design.md`, touched app files, matching CSS.
-- Backend/API work: `skills/backend/SKILL.md`, relevant migration, relevant Edge Function, frontend caller.
-- Product ideation: `workflows/brainstorm.md`, `docs/BUILD_READY_SPEC.md`, current public section/page.
-- Structural work: `workflows/struct.md`, current folders, docs that describe the target structure.
-- Deploy work: `workflows/deploy.md`, `docs/SUPABASE_SETUP.md`, env/secrets references.
-- Review work: the changed files, contracts they depend on, and the checks that prove them.
-
-Do not bulk-read unrelated files just because they exist.
-
-## 3. Decide Scope
-
-Before implementation, identify:
-
-- the user-facing outcome
-- the owner/admin outcome, if any
-- whether Supabase data, RLS, Storage, Edge Functions, or secrets are involved
-- whether the request is MVP-critical, V1, or future/backlog
-- the smallest change that leaves the next contributor in a better position
-
-Stay inside the free-tier stack unless the user explicitly approves a paid service or external dependency.
-
-## 4. Route The Work
-
-Use these defaults:
-
-- Public section, admin screen, styling, forms, routing: CAN / frontend skill.
-- Schema, policies, rate limits, WhatsApp, Turnstile, service role: Kaan / backend skill.
-- Both UI and backend contract: read both skills, then let the frontend contract and backend safety constraints meet in the service layer.
-- Docs, `.agents`, project process: structure workflow plus this orchestrator.
-
-When in doubt, preserve the current MVP vertical slice rather than expanding architecture.
-
-## 5. Verification Plan
-
-Match checks to risk:
-
-- Docs/process only: read changed Markdown and verify links/paths are correct.
-- Frontend only: `npm run lint`, `npm run build`, mobile-first visual check.
-- Admin changes: unauthenticated state, authenticated admin state, non-admin state when possible.
-- Contact form changes: validation error path, successful insert path, WhatsApp failure/retry path when credentials allow.
-- Backend changes: migration order, RLS behavior, function contract, relevant SQL verification query.
-- Deploy changes: rollout order, secrets, rollback note, post-deploy smoke test.
-
-If a check cannot run, state why and what remains unverified.
-
-## 6. Handoff Format
-
-When finishing, report:
-
-- what changed
-- why it fits the current architecture
-- what was verified
-- what risk or follow-up remains
-
-Keep the answer short unless the user asks for a deep report.
+## Handoff
+Report: what changed · why it fits the architecture · what was verified · remaining risk/follow-up. If a check couldn't run, say why and what's unverified. Keep it short unless a deep report is asked.

@@ -16,7 +16,7 @@ Only public browser-safe values belong here. The service-role key, WhatsApp toke
 
 Do not run `supabase login`, `supabase link`, migrations, or function deploys against an account until the target Supabase project is confirmed. This computer may have another Supabase account configured.
 
-The target project is currently documented in `../docs/SUPABASE_SETUP.md`.
+The target project is currently documented in `../docs/SETUP.md`.
 
 ## Admin Setup
 
@@ -45,3 +45,12 @@ npm run dev
 npm run lint
 npm run build
 ```
+
+## Static Hosting
+
+The app is a single-page React app. Static hosts must rewrite deep links such as `/admin`,
+`/admin/reset`, and `/admin/sections/contact` back to `index.html` so the client router can
+render the right screen after a refresh.
+
+- Netlify and Cloudflare Pages use `public/_redirects`, which Vite copies to `dist/_redirects`.
+- Vercel uses `vercel.json` from the `app/` deploy root.

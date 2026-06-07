@@ -4,15 +4,18 @@ Dynamic one-page wedding venue site with a protected owner admin panel and Whats
 
 ## Current Status
 
-The first MVP vertical slice is scaffolded locally:
+The MVP vertical slice is implemented locally:
 
 - Vite + React + TypeScript app in `app/`
 - Supabase migration and seed in `supabase/`
-- Edge Function skeletons for `submit-contact` and `retry-whatsapp`
-- Public Hero render
+- Edge Functions for `submit-contact` and `retry-whatsapp`
+- Public editable section rendering
 - Contact form that calls only the Edge Function
-- Admin email/password login shell
-- Hero draft/publish editor
+- Admin email/password login
+- Hero/About/Services/Gallery/Slider/Location/FAQ/Contact draft/publish editors
+- Editable Header/Footer chrome with Instagram, phone, WhatsApp, and Google Maps contact actions
+- Admin-controlled section order
+- Admin-created custom sections and whole-section Hide/Show controls
 - Submission list with failed-WhatsApp retry action
 
 Supabase project status:
@@ -24,7 +27,9 @@ Supabase project status:
 - `submit-contact` smoke test returns validation errors correctly.
 - Temporary owner admin user created and promoted.
 - Admin login, Hero publish, public Hero render, contact submission storage, submissions list, and retry action verified.
+- Newer local migrations for Gallery, Header/Footer chrome, direct-contact actions, and Contact are pending target application and verification.
 - `ALLOW_MISSING_TURNSTILE=true` is enabled for temporary testing only.
+- Production is blocked until the leaked `sbp_` token is rotated, the real owner account replaces the temp owner, real WhatsApp/Turnstile secrets are set, and a real WhatsApp delivery test passes.
 
 ## Target Supabase Project
 
@@ -36,21 +41,22 @@ This machine may have another Supabase account configured. Do not run `supabase 
 
 ## Setup Order
 
-1. Replace the temporary owner login with the real owner account before production.
-2. Set real WhatsApp and Turnstile Edge Function secrets from `supabase/functions/.env.example`.
-3. Disable `ALLOW_MISSING_TURNSTILE` before production.
-4. Run the frontend from `app/` and test the full WhatsApp delivery loop.
+1. Rotate or revoke the leaked Supabase `sbp_` access token before any new automated access.
+2. Confirm the active Supabase account and target project before running CLI or deploy commands.
+3. Replace the temporary owner login with the real owner account before production.
+4. Set real WhatsApp and Turnstile Edge Function secrets from `supabase/functions/.env.example`.
+5. Disable `ALLOW_MISSING_TURNSTILE` before production.
+6. Add the production Hero image and test the full WhatsApp delivery loop from the deployed site.
 
-Detailed steps live in `docs/SUPABASE_SETUP.md`.
+Detailed steps live in `docs/SETUP.md`.
 
 ## Project Docs
 
-- `docs/BUILD_READY_SPEC.md` — MVP scope, contracts, and V1 boundary.
+- `docs/CONTEXT.md` — small always-load context, invariants, and live state.
+- `docs/STATUS.md` — production readiness checklist and current blockers.
+- `docs/SETUP.md` — setup runbook, Edge Function contracts, secrets, and WhatsApp notes.
 - `docs/DECISIONS.md` — accepted architecture and product decisions.
-- `docs/ROADMAP.md` — recommended build sequence after the MVP slice.
-- `docs/PHASE_0_AUDIT.md` — current MVP hardening audit and launch blockers.
-- `docs/SUPABASE_SETUP.md` — target project setup and verification runbook.
-- `docs/GO_LIVE_CHECKLIST.md` — production readiness checklist.
+- `docs/ROADMAP.md` — recommended build sequence after MVP hardening.
 
 ## Frontend
 
