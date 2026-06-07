@@ -13,6 +13,7 @@ declare global {
         },
       ) => string;
       remove: (widgetId: string) => void;
+      reset: (widgetId: string) => void;
     };
   }
 }
@@ -20,10 +21,18 @@ declare global {
 type TurnstileWidgetProps = {
   siteKey: string;
   onToken: (token: string) => void;
+  onStatusChange?: (status: "idle" | "ready" | "solved" | "expired" | "error") => void;
+  resetSignal?: number;
 };
 
-export function TurnstileWidget({ siteKey, onToken }: TurnstileWidgetProps) {
+export function TurnstileWidget({
+  siteKey,
+  onToken,
+  onStatusChange,
+  resetSignal = 0,
+}: TurnstileWidgetProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const widgetIdRef = useRef<string | null>(null);
 
   useEffect(() => {
     if (!siteKey || !containerRef.current) {
@@ -40,10 +49,21 @@ export function TurnstileWidget({ siteKey, onToken }: TurnstileWidgetProps) {
 
       widgetId = window.turnstile.render(containerRef.current, {
         sitekey: siteKey,
-        callback: onToken,
-        "expired-callback": () => onToken(""),
-        "error-callback": () => onToken(""),
+        callback: (token) => {
+          onToken(token);
+          onStatusChange?.("solved");
+        },
+        "expired-callback": () => {
+          onToken("");
+          onStatusChange?.("expired");
+        },
+        "error-callback": () => {
+          onToken("");
+          onStatusChange?.("error");
+        },
       });
+      widgetIdRef.current = widgetId;
+      onStatusChange?.("ready");
     };
 
     if (window.turnstile) {
@@ -67,12 +87,22 @@ export function TurnstileWidget({ siteKey, onToken }: TurnstileWidgetProps) {
 
     return () => {
       cancelled = true;
+      onStatusChange?.("idle");
 
       if (widgetId && window.turnstile) {
         window.turnstile.remove(widgetId);
+        widgetIdRef.current = null;
       }
     };
   }, [onToken, siteKey]);
+
+  useEffect(() => {
+    if (resetSignal > 0 && widgetIdRef.current && window.turnstile) {
+      window.turnstile.reset(widgetIdRef.current);
+      onToken("");
+      onStatusChange?.("ready");
+    }
+  }, [onStatusChange, onToken, resetSignal]);
 
   return <div className="turnstile-widget" ref={containerRef} />;
 }

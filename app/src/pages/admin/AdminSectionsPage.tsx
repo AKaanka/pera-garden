@@ -1,6 +1,15 @@
 import { useEffect, useState, type DragEvent } from "react";
-import { getAdminSectionRows, saveSectionOrder, sectionLabels } from "../../services/supabase/content";
+import {
+  deleteCustomSection,
+  getAdminSectionRows,
+  getSectionLabel,
+  isBuiltInSectionKey,
+  saveSectionOrder,
+  saveSectionVisibility,
+} from "../../services/supabase/content";
 import type { SectionKey, SiteContentRow } from "../../types";
+
+const unsavedOrderMessage = "You have unsaved section order changes. Leave without saving them?";
 
 function moveRow(rows: SiteContentRow[], fromIndex: number, toIndex: number) {
   const nextRows = [...rows];
@@ -12,6 +21,10 @@ function moveRow(rows: SiteContentRow[], fromIndex: number, toIndex: number) {
   }));
 }
 
+function orderSummary(rows: SiteContentRow[]) {
+  return rows.map((row) => getSectionLabel(row.section_key, row.content)).join(" -> ");
+}
+
 export function AdminSectionsPage() {
   const [rows, setRows] = useState<SiteContentRow[]>([]);
   const [draggedKey, setDraggedKey] = useState<SectionKey | "">("");
@@ -20,6 +33,8 @@ export function AdminSectionsPage() {
   const [saving, setSaving] = useState(false);
   const [status, setStatus] = useState("");
   const [statusType, setStatusType] = useState<"success" | "error">("success");
+
+  const confirmUnsavedOrder = () => !hasUnsavedOrder || window.confirm(unsavedOrderMessage);
 
   const loadSections = async () => {
     setLoading(true);
@@ -37,9 +52,146 @@ export function AdminSectionsPage() {
     }
   };
 
+  const toggleSectionVisibility = async (row: SiteContentRow) => {
+    const nextVisibility = !row.is_visible;
+    setSaving(true);
+    setStatus("");
+    setStatusType("success");
+
+    try {
+      await saveSectionVisibility(row.section_key, nextVisibility);
+      setRows((currentRows) =>
+        currentRows.map((currentRow) =>
+          currentRow.section_key === row.section_key
+            ? {
+                ...currentRow,
+                is_visible: nextVisibility,
+              }
+            : currentRow,
+        ),
+      );
+      setStatus(
+        `${getSectionLabel(row.section_key, row.content)} ${
+          nextVisibility ? "will be visible on the homepage." : "is kept in admin only."
+        }`,
+      );
+    } catch (error) {
+      setStatusType("error");
+      setStatus(error instanceof Error ? error.message : "Could not update section visibility.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const removeCustomSection = async (row: SiteContentRow) => {
+    const label = getSectionLabel(row.section_key, row.content);
+
+    if (isBuiltInSectionKey(row.section_key)) {
+      setStatusType("error");
+      setStatus("Built-in sections cannot be removed. Use Hide to keep one out of the homepage.");
+      return;
+    }
+
+    if (!window.confirm(`Remove "${label}" from admin and the homepage?`)) {
+      return;
+    }
+
+    setSaving(true);
+    setStatus("");
+    setStatusType("success");
+
+    try {
+      await deleteCustomSection(row.section_key);
+      const nextRows = rows
+        .filter((currentRow) => currentRow.section_key !== row.section_key)
+        .map((currentRow, index) => ({
+          ...currentRow,
+          order_index: index,
+        }));
+
+      await saveSectionOrder(nextRows.map((currentRow) => currentRow.section_key));
+      setRows(nextRows);
+      setHasUnsavedOrder(false);
+      setStatus(`${label} removed.`);
+    } catch (error) {
+      setStatusType("error");
+      setStatus(error instanceof Error ? error.message : "Could not remove section.");
+    } finally {
+      setSaving(false);
+    }
+  };
+
   useEffect(() => {
     void loadSections();
   }, []);
+
+  useEffect(() => {
+    if (!hasUnsavedOrder) {
+      return undefined;
+    }
+
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+      event.returnValue = unsavedOrderMessage;
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, [hasUnsavedOrder]);
+
+  useEffect(() => {
+    if (!hasUnsavedOrder) {
+      return undefined;
+    }
+
+    const handleDocumentClick = (event: MouseEvent) => {
+      if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) {
+        return;
+      }
+
+      const target = event.target;
+
+      if (!(target instanceof Element)) {
+        return;
+      }
+
+      const navigationButton = target.closest("button[data-admin-navigation]");
+      const anchor = target.closest("a");
+
+      if (navigationButton) {
+        if (!window.confirm(unsavedOrderMessage)) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+
+        return;
+      }
+
+      if (!anchor || anchor.target || anchor.origin !== window.location.origin) {
+        return;
+      }
+
+      const nextUrl = new URL(anchor.href);
+
+      if (nextUrl.pathname === window.location.pathname && nextUrl.hash === window.location.hash) {
+        return;
+      }
+
+      if (!window.confirm(unsavedOrderMessage)) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+    };
+
+    document.addEventListener("click", handleDocumentClick, true);
+
+    return () => {
+      document.removeEventListener("click", handleDocumentClick, true);
+    };
+  }, [hasUnsavedOrder]);
 
   const handleDragStart = (sectionKey: SectionKey) => {
     setDraggedKey(sectionKey);
@@ -87,13 +239,21 @@ export function AdminSectionsPage() {
     try {
       await saveSectionOrder(rows.map((row) => row.section_key));
       setHasUnsavedOrder(false);
-      setStatus("Section order saved.");
+      setStatus(`Section order saved: ${orderSummary(rows)}.`);
     } catch (error) {
       setStatusType("error");
       setStatus(error instanceof Error ? error.message : "Could not save section order.");
     } finally {
       setSaving(false);
     }
+  };
+
+  const editSection = (sectionKey: SectionKey) => {
+    if (!confirmUnsavedOrder()) {
+      return;
+    }
+
+    window.location.href = `/admin/sections/${sectionKey}`;
   };
 
   if (loading) {
@@ -119,13 +279,13 @@ export function AdminSectionsPage() {
 
       {hasUnsavedOrder ? (
         <p className="form-status is-warning" role="status">
-          Order changed. Save to update the public page.
+          Order changed. Save before opening another section to keep the new homepage order.
         </p>
       ) : null}
 
-      <div className="section-order-list" aria-label="Homepage section order">
+      <ol className="section-order-list" aria-label="Homepage section order">
         {rows.map((row, index) => (
-          <article
+          <li
             className="section-order-item"
             draggable
             key={row.section_key}
@@ -137,11 +297,14 @@ export function AdminSectionsPage() {
               ::
             </span>
             <div>
-              <h2>{sectionLabels[row.section_key]}</h2>
-              <p>Position {row.order_index + 1}</p>
+              <h2>{getSectionLabel(row.section_key, row.content)}</h2>
+              <p>
+                Position {index + 1} of {rows.length} - {row.is_visible ? "Visible" : "Hidden"}
+              </p>
             </div>
             <div className="section-order-actions">
               <button
+                aria-label={`Move ${getSectionLabel(row.section_key, row.content)} up`}
                 className="secondary-button compact-action"
                 disabled={index === 0}
                 type="button"
@@ -150,6 +313,7 @@ export function AdminSectionsPage() {
                 Up
               </button>
               <button
+                aria-label={`Move ${getSectionLabel(row.section_key, row.content)} down`}
                 className="secondary-button compact-action"
                 disabled={index === rows.length - 1}
                 type="button"
@@ -157,13 +321,35 @@ export function AdminSectionsPage() {
               >
                 Down
               </button>
-              <a className="secondary-button compact-action" href={`/admin/sections/${row.section_key}`}>
+              <button
+                className="secondary-button compact-action"
+                disabled={saving}
+                type="button"
+                onClick={() => toggleSectionVisibility(row)}
+              >
+                {row.is_visible ? "Hide" : "Show"}
+              </button>
+              <button
+                className="secondary-button compact-action"
+                type="button"
+                onClick={() => editSection(row.section_key)}
+              >
                 Edit
-              </a>
+              </button>
+              {!isBuiltInSectionKey(row.section_key) ? (
+                <button
+                  className="secondary-button compact-action"
+                  disabled={saving}
+                  type="button"
+                  onClick={() => removeCustomSection(row)}
+                >
+                  Remove
+                </button>
+              ) : null}
             </div>
-          </article>
+          </li>
         ))}
-      </div>
+      </ol>
 
       {status ? (
         <p className={`form-status is-${statusType}`} role="status">
