@@ -62,7 +62,13 @@ function PageState({
   );
 }
 
-function renderSection(row: SiteContentRow, locale: Locale, contactActions?: ReactNode) {
+function renderSection(
+  row: SiteContentRow,
+  locale: Locale,
+  contactActions?: ReactNode,
+  mapHref?: string,
+  whatsappHref?: string,
+) {
   if (row.section_key === "about") {
     return <About content={row.content as AboutContent} key={row.id} locale={locale} />;
   }
@@ -80,7 +86,7 @@ function renderSection(row: SiteContentRow, locale: Locale, contactActions?: Rea
   }
 
   if (row.section_key === "location") {
-    return <Location content={row.content as LocationContent} key={row.id} locale={locale} />;
+    return <Location content={row.content as LocationContent} key={row.id} locale={locale} mapHref={mapHref} />;
   }
 
   if (row.section_key === "faq") {
@@ -94,6 +100,7 @@ function renderSection(row: SiteContentRow, locale: Locale, contactActions?: Rea
         content={row.content as ContactContent}
         key={row.id}
         locale={locale}
+        whatsappHref={whatsappHref}
       />
     );
   }
@@ -414,9 +421,12 @@ function SiteFooter({ chrome, locale }: { chrome: ChromeContent; locale: Locale 
         <span style={getTextStyle(content, "footerText")}>{content.footerText}</span>
       </div>
       {phoneAction ? (
-        <a className="site-footer-phone" href={phoneAction.href} style={getTextStyle(content, "phoneLabel")}>
-          {phoneAction.value ?? phoneAction.label}
-        </a>
+        <div className="site-footer-contact">
+          <span className="site-footer-location">Safranbolu</span>
+          <a className="site-footer-phone" href={phoneAction.href} style={getTextStyle(content, "phoneLabel")}>
+            {phoneAction.value ?? phoneAction.label}
+          </a>
+        </div>
       ) : null}
       <a className="site-footer-action" href={content.footerLinkHref} style={getTextStyle(content, "footerLinkLabel")}>
         {content.footerLinkLabel}
@@ -506,9 +516,9 @@ export function HomePage() {
           <PageState
             eyebrow="Pera Garden"
             title="Sayfa şu anda yüklenemiyor"
-            message="Lütfen biraz sonra tekrar deneyin ya da rezervasyon detayları için doğrudan bizimle iletişime geçin."
+            message="Lütfen biraz sonra tekrar deneyin ya da davet detayları için doğrudan bizimle iletişime geçin."
           />
-          <ContactForm locale={locale} />
+          <ContactForm locale={locale} whatsappHref={(fallbackChromeContent[locale] ?? fallbackChromeContent.tr).whatsappHref} />
         </main>
         <SiteFooter chrome={fallbackChromeContent} locale={locale} />
       </>
@@ -522,9 +532,9 @@ export function HomePage() {
           <PageState
             eyebrow="Pera Garden"
             title="Yayınlanan içerik hazırlanıyor"
-            message="Pera Garden sayfası kısa süre içinde tekrar yayında olacak. Rezervasyon ve tarih bilgisi için bizimle iletişime geçebilirsiniz."
+            message="Pera Garden sayfası kısa süre içinde tekrar yayında olacak. Tarih ve davet bilgisi için bizimle iletişime geçebilirsiniz."
           />
-          <ContactForm locale={locale} />
+          <ContactForm locale={locale} whatsappHref={((state.chrome ?? fallbackChromeContent)[locale] ?? (state.chrome ?? fallbackChromeContent).tr).whatsappHref} />
         </main>
         <SiteFooter chrome={state.chrome ?? fallbackChromeContent} locale={locale} />
       </>
@@ -532,17 +542,18 @@ export function HomePage() {
   }
 
   const publicSections = withLocalGalleryPreview(state.sections);
-  const contactActions = state.chrome ? (
-    <ContactActionButtons content={state.chrome[locale] ?? state.chrome.tr} />
-  ) : undefined;
+  const chromeContent = state.chrome ? state.chrome[locale] ?? state.chrome.tr : undefined;
+  const mapHref = chromeContent?.mapHref;
+  const whatsappHref = chromeContent?.whatsappHref;
+  const contactActions = chromeContent ? <ContactActionButtons content={chromeContent} /> : undefined;
 
   return (
     <>
       {state.chrome ? <SiteHeader chrome={state.chrome} locale={locale} onLocaleChange={setLocale} /> : null}
       <main id="top" className="site-main">
-        {publicSections.map((section) => renderSection(section, locale, contactActions))}
+        {publicSections.map((section) => renderSection(section, locale, contactActions, mapHref, whatsappHref))}
         {publicSections.some((section) => section.section_key === "contact") ? null : (
-          <ContactForm contactActions={contactActions} locale={locale} />
+          <ContactForm contactActions={contactActions} locale={locale} whatsappHref={whatsappHref} />
         )}
       </main>
       {state.chrome ? <SiteFooter chrome={state.chrome} locale={locale} /> : null}

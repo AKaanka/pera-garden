@@ -1,5 +1,6 @@
 import type { Locale, ServicesContent } from "../types";
 import { getPublicImageUrl } from "../services/supabase/content";
+import { getSectionBackgroundStyle } from "../utils/sectionBackground";
 import { getTextStyle } from "../utils/textStyles";
 
 type ServicesProps = {
@@ -16,7 +17,7 @@ export function Services({ content, locale }: ServicesProps) {
   }
 
   return (
-    <section className="services-section" id="services" aria-labelledby="services-title">
+    <section className="services-section" id="services" aria-labelledby="services-title" style={getSectionBackgroundStyle(content)}>
       <div className="section-shell services-shell">
         <div className="services-heading">
           <p className="eyebrow" style={getTextStyle(services, "eyebrow")}>{services.eyebrow}</p>

@@ -16,6 +16,7 @@ import type {
   SliderContent,
 } from "../../types";
 import { normalizeTextStyles } from "../../utils/textStyles";
+import { isSectionBackground } from "../../utils/sectionBackground";
 import { requireSupabaseClient, supabase } from "./client";
 import { isLocalMediaPath } from "./localMedia";
 
@@ -47,7 +48,7 @@ export const fallbackChromeContent: ChromeContent = {
         href: "#location",
       },
     ],
-    ctaLabel: "Rezervasyon",
+    ctaLabel: "İletişim",
     ctaHref: "#contact",
     instagramLabel: "Instagram",
     instagramHref: "https://www.instagram.com/",
@@ -86,7 +87,7 @@ export const fallbackChromeContent: ChromeContent = {
         href: "#location",
       },
     ],
-    ctaLabel: "Reservation",
+    ctaLabel: "Contact",
     ctaHref: "#contact",
     instagramLabel: "Instagram",
     instagramHref: "https://www.instagram.com/",
@@ -108,13 +109,13 @@ export const fallbackHeroContent: HeroContent = {
     title: "Düğününüz için zamansız bir bahçe",
     subtitle:
       "Sevdiklerinizle bir araya geleceğiniz, fotoğraf gibi hatırlanan zarif bir açık hava davet alanı.",
-    primaryCtaLabel: "Rezervasyon",
+    primaryCtaLabel: "İletişim",
     primaryCtaHref: "#contact",
     secondaryCtaLabel: "Galeriyi Gör",
     secondaryCtaHref: "#gallery",
     image: {
       bucket: "hero",
-      path: "",
+      path: "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=2000&q=80",
       alt: "Pera Garden düğün alanı",
     },
   },
@@ -123,13 +124,13 @@ export const fallbackHeroContent: HeroContent = {
     title: "A timeless garden for your wedding",
     subtitle:
       "An elegant outdoor venue for celebrations that feel intimate, warm, and beautifully remembered.",
-    primaryCtaLabel: "Book Now",
+    primaryCtaLabel: "Contact",
     primaryCtaHref: "#contact",
     secondaryCtaLabel: "View Gallery",
     secondaryCtaHref: "#gallery",
     image: {
       bucket: "hero",
-      path: "",
+      path: "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=2000&q=80",
       alt: "Pera Garden wedding venue",
     },
   },
@@ -137,42 +138,44 @@ export const fallbackHeroContent: HeroContent = {
 
 export const fallbackAboutContent: AboutContent = {
   tr: {
-    eyebrow: "Pera Garden deneyimi",
-    title: "Şehrin ritminden uzak, davetinize yakın",
+    eyebrow: "Pera Garden hakkında",
+    title: "Bahçede başlayan, özenle ilerleyen bir davet deneyimi",
     body:
-      "Pera Garden; açık hava ferahlığını, özenli servis akışını ve sade bir zarafeti aynı bahçede buluşturur. Nikâh, yemek ve kutlama anları için planlanan alan, misafirlerinizin rahatça hareket edebileceği sıcak bir atmosfer sunar.",
+      "Pera Garden, düğün ve özel davetler için açık havanın ferahlığını düzenli bir organizasyon akışıyla birleştirir. Misafir karşılama, nikâh alanı, yemek düzeni ve kutlama ritmi aynı bahçe içinde sakin, anlaşılır ve zarif bir bütün olarak planlanır.",
+    experienceTitle: "Davet deneyimi",
     highlights: [
       {
-        title: "Bahçe atmosferi",
-        description: "Doğal ışık, yeşil doku ve fotoğraf dostu açık alanlar.",
+        title: "Açık hava atmosferi",
+        description: "Yeşil dokusu, doğal ışığı ve sade yerleşimiyle fotoğrafı güçlü, daveti rahat bir bahçe.",
       },
       {
-        title: "Akıcı organizasyon",
-        description: "Karşılama, tören, yemek ve kutlama akışı tek planda düşünülür.",
+        title: "Planlı davet akışı",
+        description: "Karşılama, tören, servis ve eğlence adımları ekip koordinasyonuyla tek akışta ilerler.",
       },
       {
-        title: "Samimi ölçek",
-        description: "Gösterişli ama yorucu olmayan, davetlilerinize yakın hissettiren bir düzen.",
+        title: "Dengeli misafir konforu",
+        description: "Şık ama yorucu olmayan düzen; çiftin, ailelerin ve misafirlerin güne yakın kalmasını sağlar.",
       },
     ],
   },
   en: {
-    eyebrow: "Pera Garden experience",
-    title: "Away from the rush, close to your celebration",
+    eyebrow: "About Pera Garden",
+    title: "A garden celebration shaped with calm, careful flow",
     body:
-      "Pera Garden brings open-air freshness, thoughtful service flow, and quiet elegance into one garden setting for ceremonies, dinners, and warm celebrations.",
+      "Pera Garden combines the freshness of an outdoor wedding venue with a clear, thoughtful event flow. Guest welcome, ceremony setting, dinner layout, and celebration rhythm are planned within one garden experience that feels warm, elegant, and easy to follow.",
+    experienceTitle: "Celebration experience",
     highlights: [
       {
-        title: "Garden atmosphere",
-        description: "Natural light, greenery, and photo-friendly outdoor spaces.",
+        title: "Open-air atmosphere",
+        description: "Greenery, natural light, and a simple layout create a comfortable setting with strong photo moments.",
       },
       {
-        title: "Smooth organization",
-        description: "Welcoming, ceremony, dinner, and celebration flow planned together.",
+        title: "Planned celebration flow",
+        description: "Welcome, ceremony, service, and entertainment move together through coordinated team planning.",
       },
       {
-        title: "Intimate scale",
-        description: "A graceful setting that feels close and comfortable for your guests.",
+        title: "Balanced guest comfort",
+        description: "A graceful layout that keeps couples, families, and guests close to the feeling of the day.",
       },
     ],
   },
@@ -347,7 +350,7 @@ export const fallbackLocationContent: LocationContent = {
     addressLabel: "Adres",
     address: "Adres bilgisi yakında eklenecek.",
     directionsLabel: "Yol tarifi al",
-    directionsHref: "#contact",
+    directionsHref: "https://www.google.com/maps/search/?api=1&query=Pera+Garden+Safranbolu",
     note: "Davetiniz için net yol tarifi ve otopark bilgisi paylaşmak isterseniz bu alanı admin panelinden güncelleyebilirsiniz.",
   },
   en: {
@@ -357,7 +360,7 @@ export const fallbackLocationContent: LocationContent = {
     addressLabel: "Address",
     address: "Address details will be added soon.",
     directionsLabel: "Get directions",
-    directionsHref: "#contact",
+    directionsHref: "https://www.google.com/maps/search/?api=1&query=Pera+Garden+Safranbolu",
     note: "Use the admin panel to add exact directions and parking notes when they are ready.",
   },
 };
@@ -413,26 +416,26 @@ export const fallbackFaqContent: FaqContent = {
 
 export const fallbackContactContent: ContactContent = {
   tr: {
-    eyebrow: "Rezervasyon",
-    title: "Tarih ve detayları konuşalım",
-    description: "Bilgilerinizi bırakın; Pera Garden ekibi WhatsApp üzerinden size geri dönsün.",
+    eyebrow: "İletişim",
+    title: "Bizimle doğrudan iletişime geçin",
+    description: "Tarih, kapasite ve davet detayları için size en uygun kanaldan hemen ulaşabilirsiniz.",
     firstNameLabel: "Ad",
     lastNameLabel: "Soyad",
     phoneLabel: "Telefon",
     phoneHelp: "WhatsApp için ülke koduyla yazabilirsiniz: +90 ...",
     messageLabel: "Mesaj",
-    submitLabel: "Rezervasyon isteği gönder",
+    submitLabel: "İletişime geç",
   },
   en: {
-    eyebrow: "Reservations",
-    title: "Let's talk through your date and details",
-    description: "Leave your details and the Pera Garden team will reply on WhatsApp.",
+    eyebrow: "Contact",
+    title: "Contact us directly",
+    description: "Reach us through your preferred channel for dates, capacity, and celebration details.",
     firstNameLabel: "First name",
     lastNameLabel: "Last name",
     phoneLabel: "Phone",
     phoneHelp: "Include a country code for WhatsApp if you can: +90 ...",
     messageLabel: "Message",
-    submitLabel: "Send request",
+    submitLabel: "Contact us",
   },
 };
 
@@ -597,14 +600,14 @@ function fallbackCustomContent(title = "New section"): CustomContent {
       eyebrow: "Yeni bölüm",
       title,
       body: "Bu bölüm için içerik yazın.",
-      primaryCtaLabel: "Rezervasyon",
+      primaryCtaLabel: "İletişim",
       primaryCtaHref: "#contact",
     },
     en: {
       eyebrow: "New section",
       title,
       body: "Write content for this section.",
-      primaryCtaLabel: "Book Now",
+      primaryCtaLabel: "Contact",
       primaryCtaHref: "#contact",
     },
   };
@@ -889,7 +892,7 @@ function normalizeCustomContent(content: unknown): CustomContent {
   };
 }
 
-export function normalizeSectionContent(sectionKey: SectionKey, content: unknown): AnySectionContent {
+function normalizeSectionContentBase(sectionKey: SectionKey, content: unknown): AnySectionContent {
   if (sectionKey === "chrome") {
     return normalizeChromeContent(content);
   }
@@ -927,6 +930,13 @@ export function normalizeSectionContent(sectionKey: SectionKey, content: unknown
   }
 
   return normalizeHeroContent(content);
+}
+
+export function normalizeSectionContent(sectionKey: SectionKey, content: unknown): AnySectionContent {
+  const base = normalizeSectionContentBase(sectionKey, content);
+  const background = (content as { background?: unknown } | null)?.background;
+
+  return isSectionBackground(background) ? { ...base, background } : base;
 }
 
 function fallbackRow<TKey extends BuiltInSectionKey>(
@@ -1532,6 +1542,10 @@ export async function deleteCustomSection(sectionKey: SectionKey) {
 export function getPublicImageUrl(bucket: string, path: string) {
   if (!path) {
     return "";
+  }
+
+  if (/^https?:\/\//i.test(path)) {
+    return path;
   }
 
   if (isLocalMediaPath(path)) {

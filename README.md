@@ -1,6 +1,6 @@
 # Pera Garden
 
-Dynamic one-page wedding venue site with a protected owner admin panel and WhatsApp-notifying contact form.
+Dynamic one-page wedding venue site with a protected owner admin panel and direct contact actions.
 
 ## Current Status
 
@@ -8,28 +8,24 @@ The MVP vertical slice is implemented locally:
 
 - Vite + React + TypeScript app in `app/`
 - Supabase migration and seed in `supabase/`
-- Edge Functions for `submit-contact` and `retry-whatsapp`
 - Public editable section rendering
-- Contact form that calls only the Edge Function
+- Contact section with direct Instagram, phone, WhatsApp, and map actions
 - Admin email/password login
 - Hero/About/Services/Gallery/Slider/Location/FAQ/Contact draft/publish editors
 - Editable Header/Footer chrome with Instagram, phone, WhatsApp, and Google Maps contact actions
 - Admin-controlled section order
 - Admin-created custom sections and whole-section Hide/Show controls
-- Submission list with failed-WhatsApp retry action
+- Netlify deploy config with SPA redirects and admin noindex headers
 
 Supabase project status:
 
 - MVP database migration applied and verified.
-- `submit-contact` and `retry-whatsapp` Edge Functions deployed.
 - Public Data API can read published Hero content.
 - Public Data API cannot read draft Hero content.
-- `submit-contact` smoke test returns validation errors correctly.
 - Temporary owner admin user created and promoted.
-- Admin login, Hero publish, public Hero render, contact submission storage, submissions list, and retry action verified.
+- Admin login, Hero publish, and public Hero render verified.
 - Newer local migrations for Gallery, Header/Footer chrome, direct-contact actions, and Contact are pending target application and verification.
-- `ALLOW_MISSING_TURNSTILE=true` is enabled for temporary testing only.
-- Production is blocked until the leaked `sbp_` token is rotated, the real owner account replaces the temp owner, real WhatsApp/Turnstile secrets are set, and a real WhatsApp delivery test passes.
+- Production is blocked until the leaked `sbp_` token is rotated, the real owner account replaces the temp owner, target migrations are applied, Netlify env vars are set, and final media/contact links are published.
 
 ## Target Supabase Project
 
@@ -44,9 +40,9 @@ This machine may have another Supabase account configured. Do not run `supabase 
 1. Rotate or revoke the leaked Supabase `sbp_` access token before any new automated access.
 2. Confirm the active Supabase account and target project before running CLI or deploy commands.
 3. Replace the temporary owner login with the real owner account before production.
-4. Set real WhatsApp and Turnstile Edge Function secrets from `supabase/functions/.env.example`.
-5. Disable `ALLOW_MISSING_TURNSTILE` before production.
-6. Add the production Hero image and test the full WhatsApp delivery loop from the deployed site.
+4. Run `supabase/manual_launch_update.sql` in Supabase SQL Editor after creating the real owner Auth user.
+5. Set Netlify environment variables from `app/.env.example`.
+6. Add production media/contact links and test the direct contact buttons from the deployed site.
 
 Detailed steps live in `docs/SETUP.md`.
 
@@ -54,7 +50,7 @@ Detailed steps live in `docs/SETUP.md`.
 
 - `docs/CONTEXT.md` — small always-load context, invariants, and live state.
 - `docs/STATUS.md` — production readiness checklist and current blockers.
-- `docs/SETUP.md` — setup runbook, Edge Function contracts, secrets, and WhatsApp notes.
+- `docs/SETUP.md` — setup runbook, deploy contract, secrets, and content notes.
 - `docs/DECISIONS.md` — accepted architecture and product decisions.
 - `docs/ROADMAP.md` — recommended build sequence after MVP hardening.
 

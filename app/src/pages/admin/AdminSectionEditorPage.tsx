@@ -56,6 +56,7 @@ import type {
   TextStyleMap,
 } from "../../types";
 import { DEFAULT_TEXT_STYLE, getTextStyle, resetTextStyleMap, updateTextStyleMap } from "../../utils/textStyles";
+import { SECTION_BACKGROUND_OPTIONS, getEffectiveSectionBackground } from "../../utils/sectionBackground";
 
 const locales: Locale[] = ["tr", "en"];
 const isLocalDev = Boolean(import.meta.env.DEV && typeof window !== "undefined");
@@ -81,14 +82,14 @@ const fallbackCustomContent: CustomContent = {
     eyebrow: "Yeni bölüm",
     title: "Yeni bölüm",
     body: "Bu bölüm için içerik yazın.",
-    primaryCtaLabel: "Rezervasyon",
+    primaryCtaLabel: "İletişim",
     primaryCtaHref: "#contact",
   },
   en: {
     eyebrow: "New section",
     title: "New section",
     body: "Write content for this section.",
-    primaryCtaLabel: "Book Now",
+    primaryCtaLabel: "Contact",
     primaryCtaHref: "#contact",
   },
 };
@@ -1079,6 +1080,17 @@ function AboutFields({
         value={about.body}
         onStyleChange={updateStyle}
         onValueChange={(value) => updateLocaleField("body", value)}
+      />
+      <StylableField
+        fieldKey="experienceTitle"
+        label="Experience header"
+        localeContent={about}
+        activeLocale={activeLocale}
+        onCopyStyle={copyStyle}
+        onResetStyle={resetStyle}
+        value={about.experienceTitle}
+        onStyleChange={updateStyle}
+        onValueChange={(value) => updateLocaleField("experienceTitle", value)}
       />
       <div className="editor-group">
         <h2>Highlights</h2>
@@ -2917,6 +2929,30 @@ export function AdminSectionEditorPage({ sectionKey }: AdminSectionEditorPagePro
           </button>
         ))}
       </div>
+
+      {sectionKey !== "chrome" && sectionKey !== "hero" ? (
+        <div className="section-background-picker">
+          <span className="section-background-picker-label">Bölüm arka plan rengi</span>
+          <div className="section-background-swatches" role="group" aria-label="Bölüm arka plan rengi">
+            {SECTION_BACKGROUND_OPTIONS.map((option) => {
+              const isActive = getEffectiveSectionBackground(sectionKey, content) === option.id;
+
+              return (
+                <button
+                  aria-pressed={isActive}
+                  className={isActive ? "section-background-swatch is-active" : "section-background-swatch"}
+                  key={option.id}
+                  type="button"
+                  onClick={() => updateContent({ ...content, background: option.id })}
+                >
+                  <span className="section-background-swatch-chip" style={{ background: option.color }} aria-hidden="true" />
+                  {option.label}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      ) : null}
 
       <form className="editor-form" onSubmit={(event) => event.preventDefault()}>
         {sectionKey === "chrome" ? (

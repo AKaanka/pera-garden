@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { getPublicImageUrl } from "../services/supabase/content";
 import { isLocalMediaPath, resolveLocalMediaUrl } from "../services/supabase/localMedia";
 import type { GalleryContent, Locale } from "../types";
+import { getSectionBackgroundStyle } from "../utils/sectionBackground";
 import { getTextStyle } from "../utils/textStyles";
 
 type GalleryProps = {
@@ -9,13 +10,15 @@ type GalleryProps = {
   locale: Locale;
 };
 
-const galleryLabels: Record<Locale, { photos: string; typeLabel: string; videos: string }> = {
+const galleryLabels: Record<Locale, { empty: string; photos: string; typeLabel: string; videos: string }> = {
   tr: {
+    empty: "Görseller çok yakında burada paylaşılacak.",
     photos: "Fotoğraflar",
     typeLabel: "Galeri türü",
     videos: "Videolar",
   },
   en: {
+    empty: "Photos and videos will be shared here soon.",
     photos: "Photos",
     typeLabel: "Gallery type",
     videos: "Videos",
@@ -184,13 +187,27 @@ export function Gallery({ content, locale }: GalleryProps) {
     }
   }, [activeType, photoItems.length, videoItems.length]);
 
+  // Keep the section (and its #gallery anchor) on the page even before any
+  // media is uploaded, so the "Gallery" nav link and the hero gallery button
+  // always scroll here. Show a short placeholder until photos/videos exist.
   if (visibleItems.length === 0) {
-    return null;
+    return (
+      <section className="gallery-section" id="gallery" aria-labelledby="gallery-title" style={getSectionBackgroundStyle(content)}>
+        <div className="section-shell gallery-shell">
+          <div className="gallery-heading">
+            <p className="eyebrow" style={getTextStyle(gallery, "eyebrow")}>{gallery.eyebrow}</p>
+            <h2 id="gallery-title" style={getTextStyle(gallery, "title")}>{gallery.title}</h2>
+            <p style={getTextStyle(gallery, "subtitle")}>{gallery.subtitle}</p>
+          </div>
+          <p className="gallery-empty">{labels.empty}</p>
+        </div>
+      </section>
+    );
   }
 
   return (
     <>
-      <section className="gallery-section" id="gallery" aria-labelledby="gallery-title">
+      <section className="gallery-section" id="gallery" aria-labelledby="gallery-title" style={getSectionBackgroundStyle(content)}>
         <div className="section-shell gallery-shell">
           <div className="gallery-heading">
             <p className="eyebrow" style={getTextStyle(gallery, "eyebrow")}>{gallery.eyebrow}</p>

@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { Locale, SliderContent } from "../types";
+import { getSectionBackgroundStyle } from "../utils/sectionBackground";
 import { getTextStyle } from "../utils/textStyles";
 
 type SliderProps = {
@@ -18,7 +19,7 @@ export function Slider({ content, locale }: SliderProps) {
   }
 
   return (
-    <section className="slider-section" id="slider" aria-labelledby="slider-title">
+    <section className="slider-section" id="slider" aria-labelledby="slider-title" style={getSectionBackgroundStyle(content)}>
       <div className="section-shell slider-shell">
         <div className="slider-heading">
           <p className="eyebrow" style={getTextStyle(slider, "eyebrow")}>{slider.eyebrow}</p>

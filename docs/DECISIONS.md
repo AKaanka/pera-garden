@@ -3,7 +3,7 @@
 Preserve unless there's a clear reason to revisit. Format: **Decision** + operational **Consequences**. Rationale kept to one line.
 
 ## ADR-001 — Free-tier only · accepted
-Use free-tier services (static host, Supabase, Meta WhatsApp Cloud, Turnstile). *Why: prove visitor→inquiry flow with no fixed monthly cost.*
+Use free-tier services (Netlify static host + Supabase). *Why: prove the owner-editable venue site with no fixed monthly cost.*
 - No paid SaaS/queues/Redis/analytics/media without approval. Prefer Supabase-native. Recheck free-tier impact before image/analytics/automation-heavy features.
 
 ## ADR-002 — One frontend app · accepted
@@ -26,9 +26,9 @@ Admin when `profiles.id = auth.uid()` AND `is_active = true`. *Why: one owner, n
 `site_content.content` JSONB with `tr` + `en` keys. *Why: flexible editing without a migration per field.*
 - Update TS contracts before shape changes. Public reads = published only. Add `section_key` values incrementally.
 
-## ADR-007 — Contact via Edge Functions · accepted
-Browser → `submit-contact`; never direct submission insert or WhatsApp call. *Why: needs validation, rate limit, service-role insert, Turnstile, server-side secrets.*
-- Keep WhatsApp/owner-phone/service-role/Turnstile out of Vite env. Function request/response shape is the public contract. Admin retry via authed `retry-whatsapp`.
+## ADR-007 — Contact via direct actions · accepted
+Public visitors contact the venue through editable direct-action links: Instagram, phone, WhatsApp, and Google Maps. *Why: fastest reliable launch without WhatsApp Business API setup.*
+- No public contact form for launch. Keep Chrome contact links editable in `/admin/sections/chrome`. Old `submit-contact` / `retry-whatsapp` functions can remain unused until we decide whether to remove or revive server-side lead capture.
 
 ## ADR-008 — Postgres rate limiting · accepted
 `contact_rate_limits` table for IP + normalized-phone limits. *Why: protects anon endpoint without Redis/paid service.*
@@ -49,3 +49,7 @@ Harden Hero→Contact→WhatsApp→Admin-retry before gallery/services/pricing/t
 ## ADR-012 — Custom sections stay generic · accepted
 Admin-created sections use `custom_*` `section_key` values and a simple localized content shape (`eyebrow`, `title`, `body`, CTA label/href). *Why: owner can add basic content without code or a new migration per section.*
 - Promote a custom section to a built-in section only when it needs a bespoke public layout, media model, or repeated structured items.
+
+## ADR-013 — SEO infrastructure is build-verified · accepted
+Public SEO signals live in reusable frontend helpers and static build artifacts, with `npm run build` verifying the generated output. *Why: avoid silent deploys with missing crawl controls, wrong canonical behavior, or absent sitemap wiring.*
+- Keep content/copy editable separately from SEO plumbing. `VITE_SITE_URL` is the production canonical origin; `VITE_SOCIAL_IMAGE_URL` is the social preview image. Public routes get metadata + JSON-LD at runtime, and production builds inject static canonical/social tags plus `WebSite`/`EventVenue` JSON-LD into `index.html`. Admin routes get client `noindex` plus host-level `X-Robots-Tag`. Build output must pass `scripts/verify-seo.mjs`.

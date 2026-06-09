@@ -1,4 +1,5 @@
 import type { FaqContent, Locale } from "../types";
+import { getSectionBackgroundStyle } from "../utils/sectionBackground";
 import { getTextStyle } from "../utils/textStyles";
 
 type FaqProps = {
@@ -10,7 +11,7 @@ export function Faq({ content, locale }: FaqProps) {
   const faq = content[locale] ?? content.tr;
 
   return (
-    <section className="faq-section" id="faq" aria-labelledby="faq-title">
+    <section className="faq-section" id="faq" aria-labelledby="faq-title" style={getSectionBackgroundStyle(content)}>
       <div className="section-shell faq-shell">
         <div className="faq-heading">
           <p className="eyebrow" style={getTextStyle(faq, "eyebrow")}>{faq.eyebrow}</p>

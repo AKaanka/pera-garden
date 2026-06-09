@@ -3,12 +3,16 @@ import { useAdminAccess } from "./hooks/useAdminAccess";
 import { useAuth } from "./hooks/useAuth";
 import type { SectionKey } from "./types";
 import { isCustomSectionKey } from "./services/supabase/content";
-
-type RouteMeta = {
-  title: string;
-  description: string;
-  noIndex?: boolean;
-};
+import {
+  adminRouteSeo,
+  applyRouteSeo,
+  defaultRouteSeo,
+  getSiteJsonLd,
+  getVenueJsonLd,
+  removeJsonLd,
+  type RouteSeo,
+  upsertJsonLd,
+} from "./utils/seo";
 
 const sectionKeys: SectionKey[] = [
   "chrome",
@@ -39,17 +43,6 @@ const AdminSubmissionsPage = lazy(() =>
   import("./pages/admin/AdminSubmissionsPage").then((module) => ({ default: module.AdminSubmissionsPage })),
 );
 
-const defaultMeta: RouteMeta = {
-  title: "Pera Garden | Bahçe düğün ve davet mekânı",
-  description: "Pera Garden düğün ve davet organizasyonları için sıcak, zarif ve ulaşımı kolay bir bahçe mekânı.",
-};
-
-const adminMeta: RouteMeta = {
-  title: "Pera Garden Admin",
-  description: "Pera Garden içerik ve rezervasyon yönetimi.",
-  noIndex: true,
-};
-
 function RouteFallback({ message = "Loading Pera Garden..." }: { message?: string }) {
   return (
     <main className="page-state" aria-live="polite">
@@ -68,7 +61,7 @@ function parseSectionKey(pathname: string): SectionKey | null {
   return null;
 }
 
-function getRouteMeta(pathname: string): RouteMeta {
+function getRouteSeo(pathname: string): RouteSeo {
   if (pathname === "/admin/reset") {
     return {
       title: "Şifre sıfırla | Pera Garden Admin",
@@ -78,59 +71,26 @@ function getRouteMeta(pathname: string): RouteMeta {
   }
 
   if (pathname.startsWith("/admin")) {
-    return adminMeta;
+    return adminRouteSeo;
   }
 
-  return defaultMeta;
+  return defaultRouteSeo;
 }
 
-function upsertMeta(selector: string, attributes: Record<string, string>) {
-  const head = document.head;
-  const existing = head.querySelector<HTMLMetaElement>(selector);
-  const element = existing ?? document.createElement("meta");
-
-  Object.entries(attributes).forEach(([name, value]) => {
-    element.setAttribute(name, value);
-  });
-
-  if (!existing) {
-    head.appendChild(element);
-  }
-}
-
-function upsertLink(rel: string, href: string) {
-  const head = document.head;
-  const selector = `link[rel="${rel}"]`;
-  const existing = head.querySelector<HTMLLinkElement>(selector);
-  const element = existing ?? document.createElement("link");
-
-  element.setAttribute("rel", rel);
-  element.setAttribute("href", href);
-
-  if (!existing) {
-    head.appendChild(element);
-  }
-}
-
-function useRouteMeta(pathname: string) {
+function useRouteSeo(pathname: string) {
   useEffect(() => {
-    const meta = getRouteMeta(pathname);
-    const canonicalUrl = `${window.location.origin}${pathname === "/" ? "/" : pathname}`;
+    const seo = getRouteSeo(pathname);
 
-    document.title = meta.title;
-    upsertMeta('meta[name="description"]', { name: "description", content: meta.description });
-    upsertMeta('meta[property="og:title"]', { property: "og:title", content: meta.title });
-    upsertMeta('meta[property="og:description"]', { property: "og:description", content: meta.description });
-    upsertMeta('meta[property="og:url"]', { property: "og:url", content: canonicalUrl });
-    upsertMeta('meta[property="og:type"]', { property: "og:type", content: "website" });
-    upsertMeta('meta[name="twitter:card"]', { name: "twitter:card", content: "summary_large_image" });
-    upsertMeta('meta[name="twitter:title"]', { name: "twitter:title", content: meta.title });
-    upsertMeta('meta[name="twitter:description"]', { name: "twitter:description", content: meta.description });
-    upsertMeta('meta[name="robots"]', {
-      name: "robots",
-      content: meta.noIndex ? "noindex, nofollow" : "index, follow",
-    });
-    upsertLink("canonical", canonicalUrl);
+    applyRouteSeo(pathname, seo);
+
+    if (seo.noIndex) {
+      removeJsonLd("site");
+      removeJsonLd("venue");
+      return;
+    }
+
+    upsertJsonLd("site", getSiteJsonLd());
+    upsertJsonLd("venue", getVenueJsonLd());
   }, [pathname]);
 }
 
@@ -213,7 +173,7 @@ function AdminRoutes({ pathname }: { pathname: string }) {
 
 export default function App() {
   const pathname = usePathname();
-  useRouteMeta(pathname);
+  useRouteSeo(pathname);
 
   if (pathname === "/admin/reset") {
     return (

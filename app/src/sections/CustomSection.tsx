@@ -1,5 +1,6 @@
 import { useId } from "react";
 import type { CustomContent, Locale } from "../types";
+import { getSectionBackgroundStyle } from "../utils/sectionBackground";
 import { getTextStyle } from "../utils/textStyles";
 
 type CustomSectionProps = {
@@ -12,7 +13,7 @@ export function CustomSection({ content, locale }: CustomSectionProps) {
   const titleId = useId();
 
   return (
-    <section className="custom-section" aria-labelledby={titleId}>
+    <section className="custom-section" aria-labelledby={titleId} style={getSectionBackgroundStyle(content)}>
       <div className="section-shell custom-section-shell">
         <div>
           <p className="eyebrow" style={getTextStyle(custom, "eyebrow")}>{custom.eyebrow}</p>

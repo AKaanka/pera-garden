@@ -54,7 +54,14 @@ export type HeroLocaleContent = {
   textStyles?: TextStyleMap;
 };
 
-export type LocalizedContent<T> = Record<Locale, T>;
+// Optional per-section background preset (the warm palette tones). Applies to
+// the whole section, so it lives at the top level of the content rather than
+// inside a locale.
+export type SectionBackground = "paper" | "beige" | "tan";
+
+export type LocalizedContent<T> = Record<Locale, T> & {
+  background?: SectionBackground;
+};
 
 export type HeroContent = LocalizedContent<HeroLocaleContent>;
 
@@ -100,6 +107,7 @@ export type AboutLocaleContent = {
   eyebrow: string;
   title: string;
   body: string;
+  experienceTitle: string;
   highlights: AboutHighlight[];
   textStyles?: TextStyleMap;
 };
