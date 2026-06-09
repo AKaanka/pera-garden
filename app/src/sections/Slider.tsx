@@ -1,5 +1,7 @@
 import { useState } from "react";
 import type { Locale, SliderContent } from "../types";
+import { getSectionBackgroundStyle } from "../utils/sectionBackground";
+import { getTextStyle } from "../utils/textStyles";
 
 type SliderProps = {
   content: SliderContent;
@@ -17,20 +19,20 @@ export function Slider({ content, locale }: SliderProps) {
   }
 
   return (
-    <section className="slider-section" aria-labelledby="slider-title">
+    <section className="slider-section" id="slider" aria-labelledby="slider-title" style={getSectionBackgroundStyle(content)}>
       <div className="section-shell slider-shell">
         <div className="slider-heading">
-          <p className="eyebrow">{slider.eyebrow}</p>
-          <h2 id="slider-title">{slider.title}</h2>
-          <p>{slider.subtitle}</p>
+          <p className="eyebrow" style={getTextStyle(slider, "eyebrow")}>{slider.eyebrow}</p>
+          <h2 id="slider-title" style={getTextStyle(slider, "title")}>{slider.title}</h2>
+          <p style={getTextStyle(slider, "subtitle")}>{slider.subtitle}</p>
         </div>
 
         <div className="slider-panel">
           <p className="slider-count">
             {activeIndex + 1} / {slides.length}
           </p>
-          <h3>{activeSlide.title}</h3>
-          <p>{activeSlide.description}</p>
+          <h3 style={getTextStyle(slider, `slides.${activeIndex}.title`)}>{activeSlide.title}</h3>
+          <p style={getTextStyle(slider, `slides.${activeIndex}.description`)}>{activeSlide.description}</p>
           <div className="slider-controls" aria-label="Slider">
             {slides.map((slide, index) => (
               <button

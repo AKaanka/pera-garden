@@ -149,6 +149,22 @@ export function AdminHeroPage() {
           </label>
 
           <label>
+            Gallery CTA label
+            <input
+              value={hero.secondaryCtaLabel}
+              onChange={(event) => updateLocale("secondaryCtaLabel", event.target.value)}
+            />
+          </label>
+
+          <label>
+            Gallery CTA target
+            <input
+              value={hero.secondaryCtaHref}
+              onChange={(event) => updateLocale("secondaryCtaHref", event.target.value)}
+            />
+          </label>
+
+          <label>
             Hero image path
             <input
               value={hero.image.path}
@@ -192,6 +208,7 @@ export function AdminHeroPage() {
           <h2>{hero.title}</h2>
           <p>{hero.subtitle}</p>
           <span>{hero.primaryCtaLabel}</span>
+          <span>{hero.secondaryCtaLabel}</span>
         </div>
       </div>
 

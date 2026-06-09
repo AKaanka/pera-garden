@@ -12,6 +12,28 @@ export async function signInWithPassword(email: string, password: string) {
   }
 }
 
+export async function requestPasswordReset(email: string) {
+  const supabase = requireSupabaseClient();
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: `${window.location.origin}/admin/reset`,
+  });
+
+  if (error) {
+    throw error;
+  }
+}
+
+export async function updatePassword(password: string) {
+  const supabase = requireSupabaseClient();
+  const { error } = await supabase.auth.updateUser({
+    password,
+  });
+
+  if (error) {
+    throw error;
+  }
+}
+
 export async function signOut() {
   const supabase = requireSupabaseClient();
   const { error } = await supabase.auth.signOut();

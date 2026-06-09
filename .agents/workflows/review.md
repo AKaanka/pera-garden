@@ -26,7 +26,7 @@ Read the changed files and the contracts they depend on:
 - Backend review: migration sequence, relevant policy/helper/function, frontend caller, setup docs.
 - Contract review: `app/src/types/index.ts`, service wrapper, Edge Function handler, documented spec.
 - Docs review: linked docs, commands, paths, status claims.
-- Deploy review: `docs/SUPABASE_SETUP.md`, `docs/GO_LIVE_CHECKLIST.md`, env/secrets references.
+- Deploy review: `docs/CONTEXT.md`, `docs/SETUP.md`, `docs/STATUS.md`, env/secrets references.
 
 Avoid reviewing isolated snippets when the behavior depends on a connected flow.
 

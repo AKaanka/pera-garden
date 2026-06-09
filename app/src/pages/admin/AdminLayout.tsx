@@ -20,10 +20,11 @@ export function AdminLayout({ children }: AdminLayoutProps) {
         </a>
         <nav aria-label="Admin">
           <a href="/admin/sections">Sections</a>
+          <a href="/admin/sections/chrome">Header & Footer</a>
           <a href="/admin/sections/hero">Hero</a>
           <a href="/admin/submissions">Submissions</a>
         </nav>
-        <button className="secondary-button" type="button" onClick={handleSignOut}>
+        <button className="secondary-button" data-admin-navigation="sign-out" type="button" onClick={handleSignOut}>
           Sign out
         </button>
       </aside>

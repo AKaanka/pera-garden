@@ -2,8 +2,12 @@
 node_modules/
 dist/
 .env
+.env.*
 .env.local
 .env.*.local
+!.env.example
+!**/.env.example
+!.env.secrets.example
 app/.vite/
 app/dist/
 supabase/.branches/
